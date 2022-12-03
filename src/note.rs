@@ -11,7 +11,7 @@ pub enum Invalid {
 }
 
 /// Represents a music note, with a pitch, a rhythm, and a dynamic (volume)
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub struct Note {
     /// the pitch must be between 0 and 127 (included)
     pitch: u8,
@@ -24,6 +24,7 @@ pub struct Note {
 }
 
 /// Represents a note by name without a specific octave or accidental
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub enum Letter {
     C = 0,
     D = 2,
@@ -104,19 +105,19 @@ impl Note {
 
     /// Returns the pitch of the note
     #[must_use]
-    pub fn pitch(self) -> u8 {
+    pub fn pitch(&self) -> u8 {
         self.pitch
     }
 
     /// Returns the rhythm value of the note
     #[must_use]
-    pub fn rhythm(self) -> f64 {
+    pub fn rhythm(&self) -> f64 {
         self.rhythm
     }
 
     /// Returns the dynamic value of the note
     #[must_use]
-    pub fn dynamic(self) -> u8 {
+    pub fn dynamic(&self) -> u8 {
         self.dynamic
     }
 }
