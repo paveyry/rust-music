@@ -1,4 +1,5 @@
 pub mod note;
+pub mod phrase;
 
 use thiserror::Error;
 

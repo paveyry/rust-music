@@ -1,4 +1,4 @@
-use super::Error;
+use crate::Error;
 
 #[derive(Error, Debug)]
 pub enum Invalid {
@@ -23,29 +23,14 @@ pub struct Note {
 }
 
 /// Represents a note by name without a specific octave or accidental
-pub enum PitchName {
-    A,
-    B,
-    C,
-    D,
-    E,
-    F,
-    G,
-}
-
-impl From<PitchName> for u8 {
-    /// Converts a `PitchName` into the matching natural pitch `u8` at octave 0
-    fn from(n: PitchName) -> Self {
-        match n {
-            PitchName::C => 0,
-            PitchName::D => 2,
-            PitchName::E => 4,
-            PitchName::F => 5,
-            PitchName::G => 7,
-            PitchName::A => 9,
-            PitchName::B => 11,
-        }
-    }
+pub enum Letter {
+    C = 0,
+    D = 2,
+    E = 4,
+    F = 5,
+    G = 7,
+    A = 9,
+    B = 11,
 }
 
 /// Represents a note accidental
@@ -60,7 +45,7 @@ impl Note {
     /// 
     /// # Arguments
     /// 
-    /// * `pitch` - The pitch of the note
+    /// * `pitch` - The pitch of the note (between 0 and 127)
     /// * `rhythm` - The rhythm value of the note
     /// * `dynamic` - The dynamic (volume) of the note
     /// 
@@ -88,7 +73,7 @@ impl Note {
     /// 
     /// # Arguments
     /// 
-    /// * `pitch_name` - The note name (between `A` and `F`)
+    /// * `letter` - The note name (between `A` and `G`)
     /// * `accidental` - The accidental of the note
     /// * `octave` - Which octave the note is in (`12` pitches per octave, 
     ///   pitch `0` is a `C`, final pitch must be `127` max)
@@ -98,11 +83,11 @@ impl Note {
     /// Will return `Error::Note(Invalid::Pitch)` if final pitch is above `127`
     /// or underflowed below `0` (`255`)
     pub fn compute_pitch(
-        pitch_name: PitchName,
+        letter: Letter,
         accidental: Accidental,
         octave: u8,
     ) -> Result<u8, Error> {
-        let base_pitch: u8 = pitch_name.into();
+        let base_pitch = letter as u8;
         let pitch = 12 * octave + base_pitch;
         if pitch > 127 {
             return Err(Error::Note(Invalid::InvalidPitch(pitch)));
@@ -158,51 +143,51 @@ pub mod dynamic_constants {
 
 #[cfg(test)]
 mod tests {
-    use super::{Accidental, Note, PitchName};
+    use super::{Accidental, Note, Letter};
     #[test]
     fn pitches() {
         assert_eq!(
-            Note::compute_pitch(PitchName::C, Accidental::Sharp, 2).unwrap(),
+            Note::compute_pitch(Letter::C, Accidental::Sharp, 2).unwrap(),
             25
         );
         assert_eq!(
-            Note::compute_pitch(PitchName::B, Accidental::Sharp, 1).unwrap(),
+            Note::compute_pitch(Letter::B, Accidental::Sharp, 1).unwrap(),
             24
         );
         assert_eq!(
-            Note::compute_pitch(PitchName::C, Accidental::Flat, 2).unwrap(),
+            Note::compute_pitch(Letter::C, Accidental::Flat, 2).unwrap(),
             23
         );
         assert_eq!(
-            Note::compute_pitch(PitchName::B, Accidental::Natural, 1).unwrap(),
+            Note::compute_pitch(Letter::B, Accidental::Natural, 1).unwrap(),
             23
         );
         assert_eq!(
-            Note::compute_pitch(PitchName::C, Accidental::Natural, 2).unwrap(),
+            Note::compute_pitch(Letter::C, Accidental::Natural, 2).unwrap(),
             24
         );
         assert_eq!(
-            Note::compute_pitch(PitchName::D, Accidental::Natural, 2).unwrap(),
+            Note::compute_pitch(Letter::D, Accidental::Natural, 2).unwrap(),
             26
         );
         assert_eq!(
-            Note::compute_pitch(PitchName::E, Accidental::Natural, 2).unwrap(),
+            Note::compute_pitch(Letter::E, Accidental::Natural, 2).unwrap(),
             28
         );
         assert_eq!(
-            Note::compute_pitch(PitchName::E, Accidental::Sharp, 2).unwrap(),
+            Note::compute_pitch(Letter::E, Accidental::Sharp, 2).unwrap(),
             29
         );
         assert_eq!(
-            Note::compute_pitch(PitchName::F, Accidental::Natural, 2).unwrap(),
+            Note::compute_pitch(Letter::F, Accidental::Natural, 2).unwrap(),
             29
         );
         assert_eq!(
-            Note::compute_pitch(PitchName::G, Accidental::Sharp, 5).unwrap(),
+            Note::compute_pitch(Letter::G, Accidental::Sharp, 5).unwrap(),
             68
         );
         assert_eq!(
-            Note::compute_pitch(PitchName::A, Accidental::Flat, 9).unwrap(),
+            Note::compute_pitch(Letter::A, Accidental::Flat, 9).unwrap(),
             116
         );
     }
