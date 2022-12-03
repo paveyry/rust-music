@@ -104,42 +104,21 @@ impl Note {
 
     /// Returns the pitch of the note
     #[must_use]
-    pub fn pitch(&self) -> u8 {
+    pub fn pitch(self) -> u8 {
         self.pitch
     }
 
     /// Returns the rhythm value of the note
     #[must_use]
-    pub fn rhythm(&self) -> f64 {
+    pub fn rhythm(self) -> f64 {
         self.rhythm
     }
 
     /// Returns the dynamic value of the note
     #[must_use]
-    pub fn dynamic(&self) -> u8 {
+    pub fn dynamic(self) -> u8 {
         self.dynamic
     }
-}
-
-pub mod rhythm_constants {
-    pub static SEMIQUAVER: f64 = 0.25;
-    pub static QUAVER: f64 = 0.5;
-    pub static CROTCHET: f64 = 1.;
-    pub static MINIM: f64 = 2.;
-    pub static SEMIBREVE: f64 = 4.;
-    // TODO: Add more shortcuts, especially triplet variants
-}
-
-pub mod dynamic_constants {
-    pub static SILENT: u8 = 0;
-    pub static PPP: u8 = 10;
-    pub static PP: u8 = 25;
-    pub static P: u8 = 50;
-    pub static MP: u8 = 60;
-    pub static MF: u8 = 70;
-    pub static F: u8 = 85;
-    pub static FF: u8 = 100;
-    pub static FFF: u8 = 120;
 }
 
 #[cfg(test)]
