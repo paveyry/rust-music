@@ -1,5 +1,5 @@
-use crate::note::Note;
 use crate::instrument::Instrument;
+use crate::note::Note;
 
 /// Describes a single musical phrase. Multiple Phrases can be stored in a Part.
 /// Each Phrase can be played at any time thanks to its `start_beat` field.
@@ -17,9 +17,9 @@ pub struct Phrase {
 
 impl Phrase {
     /// Returns a Phrase with the given `name`, `start_beat`, and `instrument`
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// * `name` - The title of the `Phrase`
     /// * `start_beat` - The beat (in the Score) at which the phrase starts
     /// * `instrument` - The MIDI instrument

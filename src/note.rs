@@ -1,4 +1,5 @@
 use crate::Error;
+use crate::Result;
 
 #[derive(Error, Debug)]
 pub enum Invalid {
@@ -44,21 +45,21 @@ pub enum Accidental {
 
 impl Note {
     /// Returns a Note with the given rhythm, pitch, and dynamic
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// * `pitch` - The pitch of the note (between 0 and 127)
     /// * `rhythm` - The rhythm value of the note
     /// * `dynamic` - The dynamic (volume) of the note
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// * `Error::Note(Invalid::Pitch)` if pitch is above `127`
     /// * `Error::Note(Invalid::Rhythm)` if rhythm is below `0.000_001`
     /// * `Error::Note(Invalid::Dynamic)` if dynamic is above `127`
-    pub fn new(pitch: u8, rhythm: f64, dynamic: u8) -> Result<Note, Error> {
+    pub fn new(pitch: u8, rhythm: f64, dynamic: u8) -> Result<Note> {
         if rhythm < 0.000_001 {
-            return Err(Error::Note(Invalid::InvalidRhythm(rhythm)))
+            return Err(Error::Note(Invalid::InvalidRhythm(rhythm)));
         }
         match (pitch, dynamic) {
             (0..=127, 0..=127) => Ok(Note {
@@ -72,23 +73,19 @@ impl Note {
     }
 
     /// Returns a pitch value based on the given pitch name, octave, and accidental
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// * `letter` - The note name (between `A` and `G`)
     /// * `accidental` - The accidental of the note
-    /// * `octave` - Which octave the note is in (`12` pitches per octave, 
+    /// * `octave` - Which octave the note is in (`12` pitches per octave,
     ///   pitch `0` is a `C`, final pitch must be `127` max)
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// Will return `Error::Note(Invalid::Pitch)` if final pitch is above `127`
     /// or underflowed below `0` (`255`)
-    pub fn compute_pitch(
-        letter: Letter,
-        accidental: Accidental,
-        octave: u8,
-    ) -> Result<u8, Error> {
+    pub fn compute_pitch(letter: Letter, accidental: Accidental, octave: u8) -> Result<u8> {
         let base_pitch = letter as u8;
         let pitch = 12 * octave + base_pitch;
         if pitch > 127 {
@@ -124,7 +121,7 @@ impl Note {
 
 #[cfg(test)]
 mod tests {
-    use super::{Accidental, Note, Letter};
+    use super::{Accidental, Letter, Note};
     #[test]
     fn pitches() {
         assert_eq!(
