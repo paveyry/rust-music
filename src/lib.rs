@@ -1,6 +1,7 @@
 pub mod note;
 pub mod phrase;
 pub mod constants;
+pub mod instrument;
 
 use thiserror::Error;
 
