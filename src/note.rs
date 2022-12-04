@@ -1,15 +1,5 @@
-use crate::Error;
+use crate::errors::NoteError;
 use crate::Result;
-
-#[derive(Error, Debug)]
-pub enum Invalid {
-    #[error("invalid pitch: {0}")]
-    InvalidPitch(u8),
-    #[error("invalid dynamic: {0}")]
-    InvalidDynamic(u8),
-    #[error("invalid rhythm: {0}")]
-    InvalidRhythm(f64),
-}
 
 /// Represents a music note, with a pitch, a rhythm, and a dynamic (volume)
 #[derive(Clone, PartialEq)]
@@ -59,7 +49,7 @@ impl Note {
     /// * `Error::Note(Invalid::Dynamic)` if dynamic is above `127`
     pub fn new(pitch: u8, rhythm: f64, dynamic: u8) -> Result<Note> {
         if rhythm < 0.000_001 {
-            return Err(Error::Note(Invalid::InvalidRhythm(rhythm)));
+            return Err(NoteError::InvalidRhythm(rhythm).into());
         }
         match (pitch, dynamic) {
             (0..=127, 0..=127) => Ok(Note {
@@ -67,8 +57,8 @@ impl Note {
                 rhythm,
                 dynamic,
             }),
-            (.., 0..=127) => Err(Error::Note(Invalid::InvalidPitch(pitch))),
-            _ => Err(Error::Note(Invalid::InvalidDynamic(dynamic))),
+            (.., 0..=127) => Err(NoteError::InvalidPitch(pitch).into()),
+            _ => Err(NoteError::InvalidDynamic(dynamic).into()),
         }
     }
 
@@ -89,13 +79,13 @@ impl Note {
         let base_pitch = letter as u8;
         let pitch = 12 * octave + base_pitch;
         if pitch > 127 {
-            return Err(Error::Note(Invalid::InvalidPitch(pitch)));
+            return Err(NoteError::InvalidPitch(pitch).into());
         }
         match (pitch, accidental) {
             (p, Accidental::Natural) => Ok(p),
-            (127, Accidental::Sharp) => Err(Error::Note(Invalid::InvalidPitch(128))),
+            (127, Accidental::Sharp) => Err(NoteError::InvalidPitch(128).into()),
             (p, Accidental::Sharp) => Ok(p + 1),
-            (0, Accidental::Flat) => Err(Error::Note(Invalid::InvalidPitch(255))),
+            (0, Accidental::Flat) => Err(NoteError::InvalidPitch(255).into()),
             (p, Accidental::Flat) => Ok(p - 1),
         }
     }
@@ -123,7 +113,7 @@ impl Note {
 mod tests {
     use super::{Accidental, Letter, Note};
     #[test]
-    fn pitches() {
+    fn compute_pitch_test() {
         assert_eq!(
             Note::compute_pitch(Letter::C, Accidental::Sharp, 2).unwrap(),
             25

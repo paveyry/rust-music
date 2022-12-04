@@ -1,71 +1,87 @@
+use crate::chord::Chord;
 use crate::instrument::Instrument;
 use crate::note::Note;
 
 /// Describes a single musical phrase. Multiple Phrases can be stored in a Part.
-/// Each Phrase can be played at any time thanks to its `start_beat` field.
 /// Phrases can be played in parallel too
 pub struct Phrase {
     /// title of the phrase
     name: String,
-    /// list of notes in the phrase
-    notes: Vec<Note>,
-    /// beat at which the phrase starts
-    start_beat: f64,
+    /// list of entries in the phrase
+    entries: Vec<Entry>,
     /// MIDI instrument
     instrument: Instrument,
 }
 
+/// Describes the entries contains in a `Phrase`
+pub enum Entry {
+    /// Silent Rest that has a rhythm value (see `constants::rhythm`)
+    Rest(f64),
+    /// A regular single `Note`
+    Note(Note),
+    /// A list of Notes played simultaneously
+    Chord(Chord),
+}
+
 impl Phrase {
-    /// Returns a Phrase with the given `name`, `start_beat`, and `instrument`
+    /// Returns a `Phrase` with the given `name`, and `instrument`
+    /// A `Phrase` contains entries that can be either a single `Note`, a `Chord` or a `Rest`
+    /// Entries in a Phrase are played sequentially.
     ///
     /// # Arguments
     ///
     /// * `name` - The title of the `Phrase`
-    /// * `start_beat` - The beat (in the Score) at which the phrase starts
     /// * `instrument` - The MIDI instrument
     #[must_use]
-    pub fn new(name: String, start_beat: f64, instrument: Instrument) -> Phrase {
+    pub fn new(name: String, instrument: Instrument) -> Phrase {
         Phrase {
-            notes: Vec::new(),
+            entries: Vec::new(),
             name,
-            start_beat,
             instrument,
         }
     }
 
-    /// Adds a note to the phrase
+    /// Adds a note to the phrase. It starts after the previous
+    /// entry.
     pub fn add_note(&mut self, note: Note) {
-        self.notes.push(note);
+        self.entries.push(Entry::Note(note));
     }
 
-    /// Adds multiple notes to the phrase (will clone the notes into the Phrase's Vec)
-    pub fn add_notes(&mut self, notes: &Vec<Note>) {
+    /// Adds multiple sequential notes to the phrase
+    /// Each note will be played after the previous one.
+    /// This function will clone the notes into the Phrase's entry Vec
+    pub fn add_sequential_notes(&mut self, notes: &[Note]) {
         for n in notes {
             self.add_note(n.clone());
         }
     }
 
-    /// Replaces the Phrase's note Vec with another one
-    pub fn set_notes(&mut self, notes: Vec<Note>) {
-        self.notes = notes;
+    /// Adds a chord to the phrase.
+    /// All notes of the Chord will start simultaneously
+    /// but can end at different times depending on their respective
+    /// rhythm values.
+    /// The following `Entry` of the `Phrase` will start at the end
+    /// of this `Chord`'s `rhythm` value, regardless of its inner notes'
+    /// duration.
+    pub fn add_chord(&mut self, c: Chord) {
+        self.entries.push(Entry::Chord(c));
+    }
+
+    /// Adds a rest to the phrase. It starts after the previous entry
+    pub fn add_rest(&mut self, rhythm: f64) {
+        self.entries.push(Entry::Rest(rhythm));
     }
 
     /// Returns the Phrase's Vec of notes
     #[must_use]
-    pub fn notes(&self) -> &Vec<Note> {
-        &self.notes
+    pub fn entries(&self) -> &Vec<Entry> {
+        &self.entries
     }
 
     /// Returns the Phrase's name
     #[must_use]
     pub fn name(&self) -> &str {
         self.name.as_str()
-    }
-
-    /// Returns the Phrase's start beat
-    #[must_use]
-    pub fn start_beat(&self) -> f64 {
-        self.start_beat
     }
 
     /// Returns the Phrase's instrument
