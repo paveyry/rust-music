@@ -1,9 +1,12 @@
 pub mod rhythm {
+    pub static DEMI_SEMIQUAVER: f64 = 0.25;
     pub static SEMIQUAVER: f64 = 0.25;
     pub static QUAVER: f64 = 0.5;
     pub static CROTCHET: f64 = 1.;
     pub static MINIM: f64 = 2.;
+    pub static DOTTED_MINIM: f64 = 3.;
     pub static SEMIBREVE: f64 = 4.;
+    pub static BREVE: f64 = 8.;
     // TODO: Add more shortcuts, especially triplet variants
 }
 
