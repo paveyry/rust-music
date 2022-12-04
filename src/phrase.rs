@@ -1,19 +1,18 @@
 use crate::chord::Chord;
-use crate::instrument::Instrument;
 use crate::note::Note;
 
 /// Describes a single musical phrase. Multiple Phrases can be stored in a Part.
 /// Phrases can be played in parallel too
+#[derive(Clone)]
 pub struct Phrase {
     /// title of the phrase
     name: String,
     /// list of entries in the phrase
     entries: Vec<Entry>,
-    /// MIDI instrument
-    instrument: Instrument,
 }
 
 /// Describes the entries contains in a `Phrase`
+#[derive(Clone)]
 pub enum Entry {
     /// Silent Rest that has a rhythm value (see `constants::rhythm`)
     Rest(f64),
@@ -31,13 +30,11 @@ impl Phrase {
     /// # Arguments
     ///
     /// * `name` - The title of the `Phrase`
-    /// * `instrument` - The MIDI instrument
     #[must_use]
-    pub fn new(name: String, instrument: Instrument) -> Phrase {
+    pub fn new(name: String) -> Phrase {
         Phrase {
             entries: Vec::new(),
             name,
-            instrument,
         }
     }
 
@@ -82,11 +79,5 @@ impl Phrase {
     #[must_use]
     pub fn name(&self) -> &str {
         self.name.as_str()
-    }
-
-    /// Returns the Phrase's instrument
-    #[must_use]
-    pub fn instrument(&self) -> Instrument {
-        self.instrument
     }
 }

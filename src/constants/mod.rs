@@ -14,15 +14,15 @@ pub mod rhythm {
     pub static BREVE: f64 = 8.;
 
     // Ternary rhythms
-    pub static TER_SEMIQUAVER: f64 = 1./6.; // 0.166
+    pub static TER_SEMIQUAVER: f64 = 1. / 6.; // 0.166
     pub static TER_DOTTED_SEMIQUAVER: f64 = 0.25;
-    pub static TER_QUAVER: f64 = 1./3.; // 0.33
+    pub static TER_QUAVER: f64 = 1. / 3.; // 0.33
     pub static TER_DOTTED_QUAVER: f64 = 0.5;
-    pub static TER_CROTCHET: f64 = 2./3.; // 0.66
+    pub static TER_CROTCHET: f64 = 2. / 3.; // 0.66
     pub static TER_DOTTED_CROTCHET: f64 = 1.;
-    pub static TER_MINIM: f64 = 4./3.; // 1.33
+    pub static TER_MINIM: f64 = 4. / 3.; // 1.33
     pub static TER_DOTTED_MINIM: f64 = 2.;
-    pub static TER_SEMIBREVE: f64 = 8./3.; // 2.66
+    pub static TER_SEMIBREVE: f64 = 8. / 3.; // 2.66
     pub static TER_DOTTED_SEMIBREVE: f64 = 4.;
 }
 

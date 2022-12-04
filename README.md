@@ -19,11 +19,12 @@ This library is currently a work-in-progress.
 * Define a chord with multiple notes
 * Define a musical phrase with chords, notes, rests, with support for trailing and 
 late simultaneous notes and chords
+* Define a part with multiple consecutive or parallel phrases for a given instrument
+* Define a full score with multiple parts for multiple instruments
 * All standard MIDI instruments codes
 
 ## Next steps
 
-* Implement `Part` and `Score` types to describe a full music piece
 * Export to MIDI files
 * Export to ABC files
 * Add a module with composition helpers (scale/chord generators, rhythm building systems, etc.)

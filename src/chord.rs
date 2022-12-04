@@ -1,8 +1,8 @@
 use ordered_float::NotNan;
 
-use crate::Result;
 use crate::errors::ChordError;
 use crate::note::Note;
+use crate::Result;
 
 /// Describes a set of notes played simultaneously
 #[derive(Clone)]
@@ -27,36 +27,33 @@ pub struct Chord {
 
 impl Chord {
     /// Returns a new Chord based on the given rhythm value and notes
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// * `rhythm`: duration in beats that the `Chord` will take in a phrase.
     /// Some notes of the chord can last longer, but the next entry added to the
     /// phrase will start after the end of this `rhythm` value.
     /// * `notes`: list of notes in the `Chord` (len must be 1 or more)
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// * `ChordError::EmptyChord` if notes vec is empty
     /// * `ChordError::RhythmTooLong` if `rhythm` is longer than the longest note
     pub fn new(rhythm: f64, notes: Vec<Note>) -> Result<Chord> {
         if notes.is_empty() {
             return Err(ChordError::EmptyChord.into());
         }
-        let maxr_opt = 
-            notes.iter()
-                 .map(Note::rhythm)
-                 .filter_map(|v| NotNan::new(v).ok())
-                 .max();
+        let maxr_opt = notes
+            .iter()
+            .map(Note::rhythm)
+            .filter_map(|v| NotNan::new(v).ok())
+            .max();
         if let Some(m) = maxr_opt {
             if m.into_inner() < rhythm {
                 return Err(ChordError::RhythmTooLong.into());
             }
         } // if we can't compute the max, just use the rhythm value
-        Ok(Chord {
-            rhythm,
-            notes,
-        })
+        Ok(Chord { rhythm, notes })
     }
 
     /// Returns the rhythm value of the `Chord`
@@ -70,5 +67,4 @@ impl Chord {
     pub fn notes(&self) -> &[Note] {
         &self.notes
     }
-
 }

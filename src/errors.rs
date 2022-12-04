@@ -6,6 +6,8 @@ pub enum Error {
     Note(#[from] NoteError),
     #[error("invalid chord: {0}")]
     Chord(#[from] ChordError),
+    #[error("invalid score: {0}")]
+    Score(#[from] ScoreError),
 }
 
 #[derive(Error, Debug)]
@@ -24,4 +26,10 @@ pub enum ChordError {
     EmptyChord,
     #[error("rhythm value is longer than its notes, use a rest")]
     RhythmTooLong,
+}
+
+#[derive(Error, Debug)]
+pub enum ScoreError {
+    #[error("tempo cannot be 0")]
+    InvalidTempo,
 }
