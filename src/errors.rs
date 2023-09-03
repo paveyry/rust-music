@@ -36,8 +36,6 @@ pub enum ScoreError {
 
 #[derive(Error, Debug)]
 pub enum ToMidiConversionError {
-    #[error("invalid float value (NaN): {0}")]
-    NaNValue(ordered_float::FloatIsNan),
     #[error("too many parts (16 max): {0}")]
     TooManyParts(usize),
 }

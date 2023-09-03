@@ -13,5 +13,4 @@ keywords = ["music", "composition", "MIDI"]
 
 [dependencies]
 thiserror = "1.0.37"
-ordered-float = "3.4.0"
 midly = "0.5.3"

@@ -1,5 +1,3 @@
-use ordered_float::NotNan;
-
 use crate::errors::ChordError;
 use crate::note::Note;
 use crate::Result;

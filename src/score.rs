@@ -9,12 +9,10 @@ use crate::constants;
 use crate::errors::ScoreError;
 use crate::errors::ToMidiConversionError;
 use crate::instrument::Instrument;
-use crate::note;
 use crate::note::*;
 use crate::part::Part;
 use crate::phrase::PhraseEntry;
 use crate::Result;
-use ordered_float::NotNan;
 
 /// Describes the scale mode (Major or Minor, other modes are not specified)
 pub enum Mode {
@@ -181,7 +179,7 @@ impl<'a> TryFrom<&Score> for Smf<'a> {
         let mut tracks = vec![metadata_track];
 
         for (channel, part) in score.parts().iter().enumerate() {
-            let mut notes_per_time: BTreeMap<NotNan<f64>, Vec<&Note>> = BTreeMap::new();
+            let mut notes_per_time: BTreeMap<u32, Vec<&Note>> = BTreeMap::new();
             // TODO: multiply the rhythms directly to get them in ticks and use u64 as keys instead of NotNan
             for phrase in part.phrases() {
                 let mut cur_time = phrase.0 as f64;
@@ -189,10 +187,7 @@ impl<'a> TryFrom<&Score> for Smf<'a> {
                     match phrase_entry {
                         PhraseEntry::Chord(c) => {
                             notes_per_time
-                                .entry(
-                                    NotNan::new(cur_time)
-                                        .map_err(|e| ToMidiConversionError::NaNValue(e))?,
-                                )
+                                .entry((cur_time*480.).round() as u32)
                                 .or_default()
                                 .extend(c.notes().iter());
                             cur_time += c.rhythm();
@@ -200,10 +195,7 @@ impl<'a> TryFrom<&Score> for Smf<'a> {
                         PhraseEntry::Note(n) => {
                             println!("inst: {:?}, note: {:?}", part.instrument(), n);
                             notes_per_time
-                                .entry(
-                                    NotNan::new(cur_time)
-                                        .map_err(|e| ToMidiConversionError::NaNValue(e))?,
-                                )
+                                .entry((cur_time*480.).round() as u32)
                                 .or_default()
                                 .push(n);
                             cur_time += n.rhythm();
@@ -232,8 +224,8 @@ impl<'a> TryFrom<&Score> for Smf<'a> {
                 });
             }
             // We know there is at least one entry here so we can unwrap
-            let start_time = notes_per_time.first_entry().unwrap().key().abs();
-            if start_time > 0.000001 {
+            let start_time = notes_per_time.first_entry().unwrap().key().clone();
+            if start_time > 0 {
                 track.push(TrackEvent {
                     delta: u28::new(0),
                     kind: TrackEventKind::Midi {
@@ -245,7 +237,7 @@ impl<'a> TryFrom<&Score> for Smf<'a> {
                     },
                 });
                 track.push(TrackEvent {
-                    delta: u28::new((start_time * 480.) as u32),
+                    delta: u28::new(start_time),
                     kind: TrackEventKind::Midi {
                         channel: u4::new(channel as u8),
                         message: MidiMessage::NoteOff {
