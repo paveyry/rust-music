@@ -1,17 +1,19 @@
 use crate::errors::NoteError;
 use crate::Result;
 
+use midly::num::u7;
+
 /// Represents a music note, with a pitch, a rhythm, and a dynamic (volume)
-#[derive(Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Note {
-    /// the pitch must be between 0 and 127 (included)
-    pitch: u8,
     /// the rhythm value is a floating point value of a beat (no maximum).
     /// Some defaults are available in the rhythms_constants submodule.
     rhythm: f64,
+    /// the pitch must be between 0 and 127 (included)
+    pitch: u7,
     /// the dynamic describes the volume of a note. Some defaults are available
     /// in the dynamics_constants submodule
-    dynamic: u8, // .
+    dynamic: u7,
 }
 
 /// Represents a note by name without a specific octave or accidental
@@ -44,22 +46,16 @@ impl Note {
     ///
     /// # Errors
     ///
-    /// * `Error::Note(Invalid::Pitch)` if pitch is above `127`
     /// * `Error::Note(Invalid::Rhythm)` if rhythm is below `0.000_001`
-    /// * `Error::Note(Invalid::Dynamic)` if dynamic is above `127`
-    pub fn new(pitch: u8, rhythm: f64, dynamic: u8) -> Result<Note> {
+    pub fn new(pitch: u7, rhythm: f64, dynamic: u7) -> Result<Note> {
         if rhythm < 0.000_001 {
             return Err(NoteError::InvalidRhythm(rhythm).into());
         }
-        match (pitch, dynamic) {
-            (0..=127, 0..=127) => Ok(Note {
-                pitch,
-                rhythm,
-                dynamic,
-            }),
-            (.., 0..=127) => Err(NoteError::InvalidPitch(pitch).into()),
-            _ => Err(NoteError::InvalidDynamic(dynamic).into()),
-        }
+        Ok(Note {
+            pitch,
+            rhythm,
+            dynamic,
+        })
     }
 
     /// Returns a pitch value based on the given pitch name, octave, and accidental
@@ -74,25 +70,25 @@ impl Note {
     /// # Errors
     ///
     /// Will return `Error::Note(Invalid::Pitch)` if final pitch is above `127`
-    /// or underflowed below `0` (`255`)
-    pub fn compute_pitch(letter: Letter, accidental: Accidental, octave: u8) -> Result<u8> {
-        let base_pitch = letter as u8;
-        let pitch = 12 * octave + base_pitch;
+    /// or underflowed below `0`
+    pub fn compute_pitch(letter: Letter, accidental: Accidental, octave: u8) -> Result<u7> {
+        // we use u32 to avoid an uint overflow before the value check
+        let base_pitch = letter as u32;
+        let nat_pitch = 12 * octave as u32 + base_pitch;
+        let pitch = match accidental {
+            Accidental::Natural => nat_pitch,
+            Accidental::Sharp => nat_pitch + 1,
+            Accidental::Flat => nat_pitch - 1,
+        };
         if pitch > 127 {
             return Err(NoteError::InvalidPitch(pitch).into());
         }
-        match (pitch, accidental) {
-            (p, Accidental::Natural) => Ok(p),
-            (127, Accidental::Sharp) => Err(NoteError::InvalidPitch(128).into()),
-            (p, Accidental::Sharp) => Ok(p + 1),
-            (0, Accidental::Flat) => Err(NoteError::InvalidPitch(255).into()),
-            (p, Accidental::Flat) => Ok(p - 1),
-        }
+        Ok(u7::new(pitch as u8))
     }
 
     /// Returns the pitch of the note
     #[must_use]
-    pub fn pitch(&self) -> u8 {
+    pub fn pitch(&self) -> u7 {
         self.pitch
     }
 
@@ -104,7 +100,7 @@ impl Note {
 
     /// Returns the dynamic value of the note
     #[must_use]
-    pub fn dynamic(&self) -> u8 {
+    pub fn dynamic(&self) -> u7 {
         self.dynamic
     }
 }

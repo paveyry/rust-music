@@ -43,16 +43,14 @@ impl Chord {
         if notes.is_empty() {
             return Err(ChordError::EmptyChord.into());
         }
-        let maxr_opt = notes
+        let maxr = notes
             .iter()
             .map(Note::rhythm)
-            .filter_map(|v| NotNan::new(v).ok())
-            .max();
-        if let Some(m) = maxr_opt {
-            if m.into_inner() < rhythm {
-                return Err(ChordError::RhythmTooLong.into());
-            }
-        } // if we can't compute the max, just use the rhythm value
+            // .filter_map(|v| if v.is_nan() { None } else { Some(v) })
+            .fold(f64::NEG_INFINITY, f64::max);
+        if maxr < rhythm {
+            return Err(ChordError::RhythmTooLong.into());
+        }
         Ok(Chord { rhythm, notes })
     }
 

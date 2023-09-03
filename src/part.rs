@@ -1,5 +1,3 @@
-use std::collections::{btree_map::Entry as MapEntry, BTreeMap};
-
 use crate::{instrument::Instrument, phrase::Phrase};
 
 /// Describes a score's part. A `Part` is played by a single
@@ -10,7 +8,7 @@ pub struct Part {
     /// The title of the `Part`
     name: String,
     /// The phrases of the `Part`, indexed by the beat at which they start
-    phrases: BTreeMap<u64, Vec<Phrase>>,
+    phrases: Vec<(u64, Phrase)>,
     /// The instrument playing the `Part`
     instrument: Instrument,
 }
@@ -26,7 +24,7 @@ impl Part {
     pub fn new(name: String, instrument: Instrument) -> Part {
         Part {
             name,
-            phrases: BTreeMap::new(),
+            phrases: Vec::new(),
             instrument,
         }
     }
@@ -36,12 +34,7 @@ impl Part {
     /// because a `Phrase` must always start on a beat. If the first note of the phrase
     /// is not on the beat, use a `Rest` in the `Phrase`.
     pub fn add_phrase(&mut self, phrase: Phrase, start_beat: u64) {
-        match self.phrases.entry(start_beat) {
-            MapEntry::Occupied(ref mut o) => o.get_mut().push(phrase),
-            MapEntry::Vacant(v) => {
-                v.insert(vec![phrase]);
-            }
-        }
+        self.phrases.push((start_beat, phrase))
     }
 
     /// Returns the title of the `Part`
@@ -52,7 +45,7 @@ impl Part {
 
     /// Returns the map of phrases of the `Part`
     #[must_use]
-    pub fn phrases(&self) -> &BTreeMap<u64, Vec<Phrase>> {
+    pub fn phrases(&self) -> &[(u64, Phrase)] {
         &self.phrases
     }
 

@@ -8,14 +8,14 @@ pub enum Error {
     Chord(#[from] ChordError),
     #[error("invalid score: {0}")]
     Score(#[from] ScoreError),
+    #[error("error converting to MIDI: {0}")]
+    ToMidiConversion(#[from] ToMidiConversionError),
 }
 
 #[derive(Error, Debug)]
 pub enum NoteError {
     #[error("invalid pitch: {0}")]
-    InvalidPitch(u8),
-    #[error("invalid dynamic: {0}")]
-    InvalidDynamic(u8),
+    InvalidPitch(u32),
     #[error("invalid rhythm: {0}")]
     InvalidRhythm(f64),
 }
@@ -32,4 +32,12 @@ pub enum ChordError {
 pub enum ScoreError {
     #[error("tempo cannot be 0")]
     InvalidTempo,
+}
+
+#[derive(Error, Debug)]
+pub enum ToMidiConversionError {
+    #[error("invalid float value (NaN): {0}")]
+    NaNValue(ordered_float::FloatIsNan),
+    #[error("too many parts (16 max): {0}")]
+    TooManyParts(usize),
 }
