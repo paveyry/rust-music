@@ -117,7 +117,7 @@ impl Score {
     }
 }
 
-impl<'a> TryFrom<&Score> for Smf<'a> {
+impl<'a> TryFrom<&'a Score> for Smf<'a> {
     type Error = crate::Error;
     /// Converts a Score into a Standard MIDI File (midly::Smf)
     ///
@@ -129,7 +129,7 @@ impl<'a> TryFrom<&Score> for Smf<'a> {
     ///
     /// Returns `ToMidiConversionError`
     /// TODO: complete errors description
-    fn try_from(score: &Score) -> Result<Smf<'a>> {
+    fn try_from(score: &'a Score) -> Result<Smf<'a>> {
         if score.parts.len() > 16 {
             return Err(ToMidiConversionError::TooManyParts(score.parts.len()).into());
         }
@@ -269,13 +269,13 @@ impl<'a> TryFrom<&Score> for Smf<'a> {
                             },
                         },
                     });
-                    // TODO: Add the NoteOffs
+                    // TODO: Add proper support for multiple notes at the same time in a single part
                 }
             }
             track.push(TrackEvent { delta: u28::new(4800), kind: TrackEventKind::Meta(MetaMessage::EndOfTrack) });
             tracks.push(track);
         }
 
-        Ok(Smf::make_static(Smf { header, tracks }))
+        Ok(Smf { header, tracks })
     }
 }
