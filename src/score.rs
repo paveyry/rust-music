@@ -92,6 +92,11 @@ impl Score {
         Ok(())
     }
 
+    pub fn write_midi_file<W: std::io::Write>(&self, w: W) -> Result<()> {
+        let smf: Smf = self.try_into()?;
+        Ok(smf.write_std(w)?)
+    }
+
     /// Returns the title of the `Score`
     #[must_use]
     pub fn name(&self) -> &str {
@@ -193,7 +198,6 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
                             cur_time += c.rhythm();
                         }
                         PhraseEntry::Note(n) => {
-                            println!("inst: {:?}, note: {:?}", part.instrument(), n);
                             notes_per_time
                                 .entry((cur_time*480.).round() as u32)
                                 .or_default()
@@ -224,7 +228,7 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
                 });
             }
             // We know there is at least one entry here so we can unwrap
-            let start_time = notes_per_time.first_entry().unwrap().key().clone();
+            let start_time = *notes_per_time.first_entry().unwrap().key();
             if start_time > 0 {
                 track.push(TrackEvent {
                     delta: u28::new(0),
