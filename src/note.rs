@@ -16,16 +16,38 @@ pub struct Note {
     dynamic: u7,
 }
 
+// #[derive(Copy, Clone, PartialEq, Eq)]
+// pub enum NoteName {
+//     C = 0,
+//     D = 2,
+//     E = 4,
+//     F = 5,
+//     G = 7,
+//     A = 9,
+//     B = 11,
+// }
+
 /// Represents a note by name without a specific octave or accidental
+/// Supports both letters from A to G and traditional Do Re Mi ... names
 #[derive(Copy, Clone, PartialEq, Eq)]
-pub enum Letter {
-    C = 0,
-    D = 2,
-    E = 4,
-    F = 5,
-    G = 7,
-    A = 9,
-    B = 11,
+pub enum NoteName {
+    Do = 0,
+    Re = 2,
+    Mi = 4,
+    Fa = 5,
+    Sol = 7,
+    La = 9,
+    Si = 11,
+}
+
+impl NoteName {
+    pub const C: NoteName = NoteName::Do;
+    pub const D: NoteName = NoteName::Re;
+    pub const E: NoteName = NoteName::Mi;
+    pub const F: NoteName = NoteName::Fa;
+    pub const G: NoteName = NoteName::Sol;
+    pub const A: NoteName = NoteName::La;
+    pub const B: NoteName = NoteName::Si;
 }
 
 /// Represents a note accidental
@@ -71,9 +93,9 @@ impl Note {
     ///
     /// Will return `Error::Note(Invalid::Pitch)` if final pitch is above `127`
     /// or underflowed below `0`
-    pub fn compute_pitch(letter: Letter, accidental: Accidental, octave: u8) -> Result<u7> {
+    pub fn compute_pitch(note: NoteName, accidental: Accidental, octave: u8) -> Result<u7> {
         // we use u32 to avoid an uint overflow before the value check
-        let base_pitch = letter as u32;
+        let base_pitch = note as u32;
         let nat_pitch = 12 * octave as u32 + base_pitch;
         let pitch = match accidental {
             Accidental::Natural => nat_pitch,

@@ -192,14 +192,14 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
                     match phrase_entry {
                         PhraseEntry::Chord(c) => {
                             notes_per_time
-                                .entry((cur_time*480.).round() as u32)
+                                .entry((cur_time * 480.).round() as u32)
                                 .or_default()
                                 .extend(c.notes().iter());
                             cur_time += c.rhythm();
                         }
                         PhraseEntry::Note(n) => {
                             notes_per_time
-                                .entry((cur_time*480.).round() as u32)
+                                .entry((cur_time * 480.).round() as u32)
                                 .or_default()
                                 .push(n);
                             cur_time += n.rhythm();
@@ -276,7 +276,10 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
                     // TODO: Add proper support for multiple notes at the same time in a single part
                 }
             }
-            track.push(TrackEvent { delta: u28::new(4800), kind: TrackEventKind::Meta(MetaMessage::EndOfTrack) });
+            track.push(TrackEvent {
+                delta: u28::new(4800),
+                kind: TrackEventKind::Meta(MetaMessage::EndOfTrack),
+            });
             tracks.push(track);
         }
 
