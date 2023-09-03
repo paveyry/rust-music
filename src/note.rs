@@ -129,51 +129,51 @@ impl Note {
 
 #[cfg(test)]
 mod tests {
-    use super::{Accidental, Letter, Note};
+    use super::{Accidental, NoteName, Note};
     #[test]
     fn compute_pitch_test() {
         assert_eq!(
-            Note::compute_pitch(Letter::C, Accidental::Sharp, 2).unwrap(),
+            Note::compute_pitch(NoteName::C, Accidental::Sharp, 2).unwrap(),
             25
         );
         assert_eq!(
-            Note::compute_pitch(Letter::B, Accidental::Sharp, 1).unwrap(),
+            Note::compute_pitch(NoteName::B, Accidental::Sharp, 1).unwrap(),
             24
         );
         assert_eq!(
-            Note::compute_pitch(Letter::C, Accidental::Flat, 2).unwrap(),
+            Note::compute_pitch(NoteName::C, Accidental::Flat, 2).unwrap(),
             23
         );
         assert_eq!(
-            Note::compute_pitch(Letter::B, Accidental::Natural, 1).unwrap(),
+            Note::compute_pitch(NoteName::B, Accidental::Natural, 1).unwrap(),
             23
         );
         assert_eq!(
-            Note::compute_pitch(Letter::C, Accidental::Natural, 2).unwrap(),
+            Note::compute_pitch(NoteName::C, Accidental::Natural, 2).unwrap(),
             24
         );
         assert_eq!(
-            Note::compute_pitch(Letter::D, Accidental::Natural, 2).unwrap(),
+            Note::compute_pitch(NoteName::D, Accidental::Natural, 2).unwrap(),
             26
         );
         assert_eq!(
-            Note::compute_pitch(Letter::E, Accidental::Natural, 2).unwrap(),
+            Note::compute_pitch(NoteName::E, Accidental::Natural, 2).unwrap(),
             28
         );
         assert_eq!(
-            Note::compute_pitch(Letter::E, Accidental::Sharp, 2).unwrap(),
+            Note::compute_pitch(NoteName::E, Accidental::Sharp, 2).unwrap(),
             29
         );
         assert_eq!(
-            Note::compute_pitch(Letter::F, Accidental::Natural, 2).unwrap(),
+            Note::compute_pitch(NoteName::F, Accidental::Natural, 2).unwrap(),
             29
         );
         assert_eq!(
-            Note::compute_pitch(Letter::G, Accidental::Sharp, 5).unwrap(),
+            Note::compute_pitch(NoteName::G, Accidental::Sharp, 5).unwrap(),
             68
         );
         assert_eq!(
-            Note::compute_pitch(Letter::A, Accidental::Flat, 9).unwrap(),
+            Note::compute_pitch(NoteName::A, Accidental::Flat, 9).unwrap(),
             116
         );
     }
