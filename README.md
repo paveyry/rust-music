@@ -1,4 +1,4 @@
-# Rust Music
+# Rust Music &emsp; ![checks_status](https://github.com/paveyry/rust-music/actions/workflows/cargo.yml/badge.svg?branch=main)
 
 `rust-music` is a framework for programmatic music manipulation and composition.
 
