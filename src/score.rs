@@ -1,15 +1,12 @@
 use std::collections::BTreeMap;
-use std::ops::Mul;
 
 use midly::{
     num::*, Format, Header, MetaMessage, MidiMessage, Smf, Timing, TrackEvent, TrackEventKind,
 };
 
-use crate::constants;
 use crate::errors::ScoreError;
 use crate::errors::ToMidiConversionError;
 use crate::instrument::Instrument;
-use crate::note::*;
 use crate::part::Part;
 use crate::phrase::PhraseEntry;
 use crate::Result;
@@ -192,7 +189,7 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
                 for phrase_entry in phrase.1.entries() {
                     match phrase_entry {
                         PhraseEntry::Chord(c) => {
-                            notes_per_time.entry(cur_time as u64).or_default().0.extend(
+                            notes_per_time.entry(cur_time).or_default().0.extend(
                                 c.notes().iter().map(|n| TrackEvent {
                                     delta: u28::default(),
                                     kind: TrackEventKind::Midi {
@@ -224,7 +221,7 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
                         }
                         PhraseEntry::Note(n) => {
                             notes_per_time
-                                .entry(cur_time as u64)
+                                .entry(cur_time)
                                 .or_default()
                                 .0
                                 .push(TrackEvent {
@@ -279,7 +276,7 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
             }
 
             let mut previous_time = 0;
-            for (current_time, mut track_events) in notes_per_time {
+            for (current_time, track_events) in notes_per_time {
                 let mut delta = current_time - previous_time;
                 // do NoteOffs first
                 for mut te in track_events.1 {
