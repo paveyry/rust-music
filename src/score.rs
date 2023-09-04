@@ -124,6 +124,7 @@ impl Score {
 
 impl<'a> TryFrom<&'a Score> for Smf<'a> {
     type Error = crate::Error;
+
     /// Converts a Score into a Standard MIDI File (midly::Smf)
     ///
     /// # Arguments
@@ -184,32 +185,81 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
         let mut tracks = vec![metadata_track];
 
         for (channel, part) in score.parts().iter().enumerate() {
-            let mut notes_per_time: BTreeMap<u32, Vec<&Note>> = BTreeMap::new();
-            // TODO: multiply the rhythms directly to get them in ticks and use u64 as keys instead of NotNan
+            let mut notes_per_time: BTreeMap<u64, (Vec<TrackEvent>, Vec<TrackEvent>)> =
+                BTreeMap::new();
             for phrase in part.phrases() {
-                let mut cur_time = phrase.0 as f64;
+                let mut cur_time = phrase.0 * 480;
                 for phrase_entry in phrase.1.entries() {
                     match phrase_entry {
                         PhraseEntry::Chord(c) => {
-                            notes_per_time
-                                .entry((cur_time * 480.).round() as u32)
-                                .or_default()
-                                .extend(c.notes().iter());
-                            cur_time += c.rhythm();
+                            notes_per_time.entry(cur_time as u64).or_default().0.extend(
+                                c.notes().iter().map(|n| TrackEvent {
+                                    delta: u28::default(),
+                                    kind: TrackEventKind::Midi {
+                                        channel: u4::new(channel as u8),
+                                        message: MidiMessage::NoteOn {
+                                            key: n.pitch(),
+                                            vel: n.dynamic(),
+                                        },
+                                    },
+                                }),
+                            );
+                            for n in c.notes() {
+                                notes_per_time
+                                    .entry(cur_time + (n.rhythm() * 480.).round() as u64)
+                                    .or_default()
+                                    .1
+                                    .push(TrackEvent {
+                                        delta: u28::default(),
+                                        kind: TrackEventKind::Midi {
+                                            channel: u4::new(channel as u8),
+                                            message: MidiMessage::NoteOff {
+                                                key: n.pitch(),
+                                                vel: u7::default(),
+                                            },
+                                        },
+                                    })
+                            }
+                            cur_time += (c.rhythm() * 480.).round() as u64;
                         }
                         PhraseEntry::Note(n) => {
                             notes_per_time
-                                .entry((cur_time * 480.).round() as u32)
+                                .entry(cur_time as u64)
                                 .or_default()
-                                .push(n);
-                            cur_time += n.rhythm();
+                                .0
+                                .push(TrackEvent {
+                                    delta: u28::default(),
+                                    kind: TrackEventKind::Midi {
+                                        channel: u4::new(channel as u8),
+                                        message: MidiMessage::NoteOn {
+                                            key: n.pitch(),
+                                            vel: n.dynamic(),
+                                        },
+                                    },
+                                });
+                            notes_per_time
+                                .entry(cur_time + (n.rhythm() * 480.).round() as u64)
+                                .or_default()
+                                .1
+                                .push(TrackEvent {
+                                    delta: u28::default(),
+                                    kind: TrackEventKind::Midi {
+                                        channel: u4::new(channel as u8),
+                                        message: MidiMessage::NoteOff {
+                                            key: n.pitch(),
+                                            vel: u7::default(),
+                                        },
+                                    },
+                                });
+                            cur_time += (n.rhythm() * 480.).round() as u64;
                         }
                         PhraseEntry::Rest(r) => {
-                            cur_time += r;
+                            cur_time += (r * 480.).round() as u64;
                         }
                     };
                 }
             }
+            // TODO: investigate if the usage of `round` on the time value (in ticks) can cause issues
             if notes_per_time.is_empty() {
                 continue;
             }
@@ -227,57 +277,29 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
                     },
                 });
             }
-            // We know there is at least one entry here so we can unwrap
-            let start_time = *notes_per_time.first_entry().unwrap().key();
-            if start_time > 0 {
-                track.push(TrackEvent {
-                    delta: u28::new(0),
-                    kind: TrackEventKind::Midi {
-                        channel: u4::new(channel as u8),
-                        message: MidiMessage::NoteOn {
-                            key: u7::default(),
-                            vel: u7::default(),
-                        },
-                    },
-                });
-                track.push(TrackEvent {
-                    delta: u28::new(start_time),
-                    kind: TrackEventKind::Midi {
-                        channel: u4::new(channel as u8),
-                        message: MidiMessage::NoteOff {
-                            key: u7::default(),
-                            vel: u7::default(),
-                        },
-                    },
-                });
-            }
-            for (time, notes) in notes_per_time {
-                for note in notes {
-                    track.push(TrackEvent {
-                        delta: u28::new(0),
-                        kind: TrackEventKind::Midi {
-                            channel: u4::new(channel as u8),
-                            message: MidiMessage::NoteOn {
-                                key: note.pitch(),
-                                vel: note.dynamic(),
-                            },
-                        },
-                    });
-                    track.push(TrackEvent {
-                        delta: u28::new(note.rhythm().mul(480.).abs() as u32),
-                        kind: TrackEventKind::Midi {
-                            channel: u4::new(channel as u8),
-                            message: MidiMessage::NoteOff {
-                                key: note.pitch(),
-                                vel: constants::dynamic::SILENT,
-                            },
-                        },
-                    });
-                    // TODO: Add proper support for multiple notes at the same time in a single part
+
+            let mut previous_time = 0;
+            for (current_time, mut track_events) in notes_per_time {
+                let mut delta = current_time - previous_time;
+                // do NoteOffs first
+                for mut te in track_events.1 {
+                    // TODO: raise error if > maxu28
+                    te.delta = u28::new(delta as u32);
+                    delta = 0; // the first event at this time has the whole delta but the others have 0
+                    track.push(te);
                 }
+                // then NoteOns
+                for mut te in track_events.0 {
+                    // TODO: raise error if > maxu28
+                    te.delta = u28::new(delta as u32);
+                    delta = 0;
+                    track.push(te);
+                }
+                previous_time = current_time;
             }
+
             track.push(TrackEvent {
-                delta: u28::new(4800),
+                delta: u28::default(),
                 kind: TrackEventKind::Meta(MetaMessage::EndOfTrack),
             });
             tracks.push(track);

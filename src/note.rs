@@ -80,34 +80,6 @@ impl Note {
         })
     }
 
-    /// Returns a pitch value based on the given pitch name, octave, and accidental
-    ///
-    /// # Arguments
-    ///
-    /// * `letter` - The note name (between `A` and `G`)
-    /// * `accidental` - The accidental of the note
-    /// * `octave` - Which octave the note is in (`12` pitches per octave,
-    ///   pitch `0` is a `C`, final pitch must be `127` max)
-    ///
-    /// # Errors
-    ///
-    /// Will return `Error::Note(Invalid::Pitch)` if final pitch is above `127`
-    /// or underflowed below `0`
-    pub fn compute_pitch(note: NoteName, accidental: Accidental, octave: u8) -> Result<u7> {
-        // we use u32 to avoid an uint overflow before the value check
-        let base_pitch = note as u32;
-        let nat_pitch = 12 * octave as u32 + base_pitch;
-        let pitch = match accidental {
-            Accidental::Natural => nat_pitch,
-            Accidental::Sharp => nat_pitch + 1,
-            Accidental::Flat => nat_pitch - 1,
-        };
-        if pitch > 127 {
-            return Err(NoteError::InvalidPitch(pitch).into());
-        }
-        Ok(u7::new(pitch as u8))
-    }
-
     /// Returns the pitch of the note
     #[must_use]
     pub fn pitch(&self) -> u7 {
@@ -127,9 +99,37 @@ impl Note {
     }
 }
 
+/// Returns a pitch value based on the given pitch name, octave, and accidental
+///
+/// # Arguments
+///
+/// * `letter` - The note name (between `A` and `G`)
+/// * `accidental` - The accidental of the note
+/// * `octave` - Which octave the note is in (`12` pitches per octave,
+///   pitch `0` is a `C`, final pitch must be `127` max)
+///
+/// # Errors
+///
+/// Will return `Error::Note(Invalid::Pitch)` if final pitch is above `127`
+/// or underflowed below `0`
+pub fn compute_pitch(note: NoteName, accidental: Accidental, octave: u8) -> Result<u7> {
+    // we use u32 to avoid an uint overflow before the value check
+    let base_pitch = note as u32;
+    let nat_pitch = 12 * octave as u32 + base_pitch;
+    let pitch = match accidental {
+        Accidental::Natural => nat_pitch,
+        Accidental::Sharp => nat_pitch + 1,
+        Accidental::Flat => nat_pitch - 1,
+    };
+    if pitch > 127 {
+        return Err(NoteError::InvalidPitch(pitch).into());
+    }
+    Ok(u7::new(pitch as u8))
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{Accidental, NoteName, Note};
+    use super::{Accidental, Note, NoteName};
     #[test]
     fn compute_pitch_test() {
         assert_eq!(
