@@ -17,9 +17,10 @@ fn main() {
 }
 
 /// Defines Bach's Praeludium No. 1 using 3 phrases by using only Notes.
-/// One phrase is the Sol clef (right hand) part
-/// One is just the lowest note in each bar
+/// One phrase is the Sol clef (right hand) part and played on the Piano.
+/// One is just the lowest note in each bar (Fa clef).
 /// Another is the higher note in the Fa clef.
+/// The Fa clef phrases are played by the Organ.
 /// `praeludium_no1_single_phrase.rs` shows a way to define the same piece
 /// with a single phrase by utilizing a property of `Chord` which allows to
 /// keep notes lasting while the next notes start
