@@ -1,12 +1,11 @@
 use std::fs::File;
 
-use midly::num::u7;
-
 use rust_music::chord::Chord;
 use rust_music::constants::dynamic::*;
 use rust_music::constants::rhythm::*;
 use rust_music::instrument::Instrument;
 use rust_music::note::{compute_pitch, Accidental as Acc, Note, NoteName as NN};
+use rust_music::num::u7;
 use rust_music::part::Part;
 use rust_music::phrase::Phrase;
 use rust_music::score::*;
@@ -21,9 +20,9 @@ fn main() {
 /// Defines Bach's Praeludium No. 1 using only one phrase by utilizing the rhythm value of `Chord`
 /// to keep notes playing while the next notes start.
 fn praeludium() -> Result<Score> {
-    let mut part = Part::new("Piano", Instrument::AcousticGrandPiano);
+    let mut part = Part::new(Instrument::AcousticGrandPiano);
 
-    part.add_phrase(phrase()?, 0);
+    part.add_phrase(phrase()?, 0.);
 
     let mut score = Score::new(
         "Praeludium No 1 in C Major",
@@ -40,7 +39,7 @@ fn praeludium() -> Result<Score> {
 }
 
 fn phrase() -> Result<Phrase> {
-    let mut phrase = Phrase::new("Single phrase");
+    let mut phrase = Phrase::new();
     let mut add_bar = |pitch1: u7, pitch2: u7, pitch3: u7, pitch4: u7, pitch5: u7| -> Result<()> {
         for _ in 0..=1 {
             // Using a single note Chord to define a note that lasts while the next notes play.

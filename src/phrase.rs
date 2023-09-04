@@ -1,16 +1,6 @@
 use crate::chord::Chord;
 use crate::note::Note;
 
-/// Describes a single musical phrase. Multiple Phrases can be stored in a Part.
-/// Phrases can be played in parallel too
-#[derive(Clone)]
-pub struct Phrase {
-    /// title of the phrase
-    name: String,
-    /// list of entries in the phrase
-    entries: Vec<PhraseEntry>,
-}
-
 /// Describes the entries contains in a `Phrase`
 #[derive(Clone)]
 pub enum PhraseEntry {
@@ -22,33 +12,57 @@ pub enum PhraseEntry {
     Chord(Chord),
 }
 
+impl PhraseEntry {
+    /// Returns the rhythm value of the entry.
+    /// In case of a Chord, this is the rhythm value specified in Chord::new(),
+    /// not the value of the notes of the Chord.
+    pub fn rhythm(&self) -> f64 {
+        match self {
+            PhraseEntry::Chord(c) => c.rhythm(),
+            PhraseEntry::Note(n) => n.rhythm(),
+            PhraseEntry::Rest(r) => *r,
+        }
+    }
+}
+
+/// Describes a single musical phrase. Multiple Phrases can be stored in a Part.
+/// Phrases can be played in parallel too
+#[derive(Default, Clone)]
+pub struct Phrase {
+    /// list of entries in the phrase
+    entries: Vec<PhraseEntry>,
+    /// duration of the `Phrase`
+    duration: f64,
+    /// title of the phrase
+    name: String,
+}
+
 impl Phrase {
-    /// Returns a `Phrase` with the given `name`, and `instrument`
+    /// Returns a new `Phrase`
     /// A `Phrase` contains entries that can be either a single `Note`, a `Chord` or a `Rest`
     /// Entries in a Phrase are played sequentially.
-    ///
-    /// # Arguments
-    ///
-    /// * `name` - The title of the `Phrase`
-    pub fn new<S: ToString>(name: S) -> Phrase {
-        Phrase {
-            entries: Vec::new(),
-            name: name.to_string(),
-        }
+    pub fn new() -> Phrase {
+        Phrase::default()
+    }
+
+    /// Sets a name for the `Phrase`. The name does not have to be unique.
+    pub fn set_name<S: ToString>(&mut self, name: S) {
+        self.name = name.to_string();
     }
 
     /// Adds a note to the phrase. It starts after the previous
     /// entry.
     pub fn add_note(&mut self, note: Note) {
+        self.duration += note.rhythm();
         self.entries.push(PhraseEntry::Note(note));
     }
 
     /// Adds multiple sequential notes to the phrase
     /// Each note will be played after the previous one.
     /// This function will clone the notes into the Phrase's entry Vec
-    pub fn add_sequential_notes(&mut self, notes: &[Note]) {
-        for n in notes {
-            self.add_note(n.clone());
+    pub fn add_sequential_notes<N: IntoIterator<Item = Note>>(&mut self, notes: N) {
+        for n in notes.into_iter() {
+            self.add_note(n);
         }
     }
 
@@ -60,11 +74,13 @@ impl Phrase {
     /// of this `Chord`'s `rhythm` value, regardless of its inner notes'
     /// duration.
     pub fn add_chord(&mut self, c: Chord) {
+        self.duration += c.rhythm();
         self.entries.push(PhraseEntry::Chord(c));
     }
 
     /// Adds a rest to the phrase. It starts after the previous entry
     pub fn add_rest(&mut self, rhythm: f64) {
+        self.duration += rhythm;
         self.entries.push(PhraseEntry::Rest(rhythm));
     }
 
@@ -76,5 +92,10 @@ impl Phrase {
     /// Returns the Phrase's name
     pub fn name(&self) -> &str {
         self.name.as_str()
+    }
+
+    // Returns the total duration (in beats, i.e. the "rhythm" unit) of the `Phrase`
+    pub fn duration(&self) -> f64 {
+        self.duration
     }
 }

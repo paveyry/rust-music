@@ -59,6 +59,8 @@ pub struct Score {
     tempo: u32,
     /// Optional information about the `Score`
     metadata: Option<Metadata>,
+    /// Duration in beats of the `Score`
+    duration: f64,
 }
 
 impl Score {
@@ -75,6 +77,7 @@ impl Score {
             parts: Vec::new(),
             tempo: tempo.0,
             metadata,
+            duration: 0.,
         }
     }
 
@@ -83,6 +86,7 @@ impl Score {
     /// Standard MIDI File, any Score with more than 16 Parts will fail
     /// because MIDI only supports 16 channels.
     pub fn add_part(&mut self, part: Part) {
+        self.duration = self.duration.max(part.duration());
         self.parts.push(part);
     }
 
@@ -122,6 +126,12 @@ impl Score {
     /// Returns the metadata
     pub fn metadata(&self) -> Option<&Metadata> {
         self.metadata.as_ref()
+    }
+
+    // Returns the total duration (in beats, i.e. the "rhythm" unit) of the `Score`.
+    // This corresponds to the end of the `Part` that finishes the latest.
+    pub fn duration(&self) -> f64 {
+        self.duration
     }
 }
 
@@ -187,7 +197,7 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
             let mut notes_per_time: BTreeMap<u64, (Vec<TrackEvent>, Vec<TrackEvent>)> =
                 BTreeMap::new();
             for phrase in part.phrases() {
-                let mut cur_time = phrase.0 * 480;
+                let mut cur_time = (phrase.0 * 480.).round() as u64;
                 for phrase_entry in phrase.1.entries() {
                     match phrase_entry {
                         PhraseEntry::Chord(c) => {
