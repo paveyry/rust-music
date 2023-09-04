@@ -3,13 +3,19 @@ name = "rust-music"
 version = "0.1.0"
 authors = ["Pierre-Alexandre Veyry"]
 edition = "2021"
-description = "A framework for programmatic music manipulation and composition"
+description = """
+A library for programmatic music manipulation and composition with MIDI export
+"""
 readme = "README.md"
+include = [
+    "/src",
+    "LICENSE.txt",
+    "/examples"
+]
 repository = "https://github.com/paveyry/rust-music"
 license = "MIT"
-keywords = ["music", "composition", "MIDI"]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+keywords = ["music", "composition", "MIDI", "score", "sheet"]
+categories = ["multimedia", "multimedia::audio", "multimedia::encoding"]
 
 [dependencies]
 thiserror = "1.0.37"
