@@ -23,9 +23,12 @@ late simultaneous notes and chords
 * Define a full score with multiple parts for multiple instruments
 * All standard MIDI instruments codes
 
-## Next steps
+## Implemented but requires more testing
 
 * Export to MIDI files
+
+## Next steps
+
 * Export to ABC files
 * Add a module with composition helpers (scale/chord generators, rhythm building systems, etc.)
 * Import from MIDI/ABC files?
