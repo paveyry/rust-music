@@ -1,7 +1,5 @@
 use std::collections::BTreeMap;
 
-use midly::{Format, Header, MetaMessage, MidiMessage, Smf, Timing, TrackEvent, TrackEventKind};
-
 use crate::errors::ScoreError;
 use crate::errors::ToMidiConversionError;
 use crate::instrument::Instrument;
@@ -9,6 +7,10 @@ use crate::num::*;
 use crate::part::Part;
 use crate::phrase::PhraseEntry;
 use crate::Result;
+
+use crate::midly::{
+    Format, Header, MetaMessage, MidiMessage, Smf, Timing, TrackEvent, TrackEventKind,
+};
 
 /// Describes the scale mode (Major or Minor, other modes are not specified)
 pub enum Mode {

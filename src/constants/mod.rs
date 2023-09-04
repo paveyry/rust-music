@@ -27,7 +27,7 @@ pub mod rhythm {
 }
 
 pub mod dynamic {
-    use midly::num::u7;
+    use crate::num::u7;
 
     pub const SILENT: u7 = u7::new(0);
     pub const PPP: u7 = u7::new(10);

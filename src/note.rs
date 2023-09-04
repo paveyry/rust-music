@@ -1,7 +1,6 @@
 use crate::errors::NoteError;
+use crate::num::u7;
 use crate::Result;
-
-use midly::num::u7;
 
 /// Represents a music note, with a pitch, a rhythm, and a dynamic (volume)
 #[derive(Debug, Clone, PartialEq)]
