@@ -73,6 +73,9 @@ impl Phrase {
     /// The following `Entry` of the `Phrase` will start at the end
     /// of this `Chord`'s `rhythm` value, regardless of its inner notes'
     /// duration.
+    /// Therefore, a `Chord` with a single `Note` (or several) allows to play the next
+    /// notes/chords while the current is still playing, by setting a `rhythm` shorter
+    /// than the notes it contains.
     pub fn add_chord(&mut self, c: Chord) {
         self.duration += c.rhythm();
         self.entries.push(PhraseEntry::Chord(c));

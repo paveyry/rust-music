@@ -1,12 +1,11 @@
 use std::collections::BTreeMap;
 
-use midly::{
-    num::*, Format, Header, MetaMessage, MidiMessage, Smf, Timing, TrackEvent, TrackEventKind,
-};
+use midly::{Format, Header, MetaMessage, MidiMessage, Smf, Timing, TrackEvent, TrackEventKind};
 
 use crate::errors::ScoreError;
 use crate::errors::ToMidiConversionError;
 use crate::instrument::Instrument;
+use crate::num::*;
 use crate::part::Part;
 use crate::phrase::PhraseEntry;
 use crate::Result;
