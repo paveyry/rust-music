@@ -10,3 +10,6 @@ pub mod score;
 pub use crate::errors::Error;
 
 pub type Result<T> = core::result::Result<T, Error>;
+
+pub use midly;
+pub use midly::num;
