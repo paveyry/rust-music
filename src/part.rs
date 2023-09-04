@@ -20,10 +20,9 @@ impl Part {
     ///
     /// * `name` -  title of the `Part`
     /// * `instrument` - instrument playing the `Part`
-    #[must_use]
-    pub fn new(name: String, instrument: Instrument) -> Part {
+    pub fn new<S: ToString>(name: S, instrument: Instrument) -> Part {
         Part {
-            name,
+            name: name.to_string(),
             phrases: Vec::new(),
             instrument,
         }
@@ -38,19 +37,16 @@ impl Part {
     }
 
     /// Returns the title of the `Part`
-    #[must_use]
     pub fn name(&self) -> &str {
         self.name.as_str()
     }
 
     /// Returns the map of phrases of the `Part`
-    #[must_use]
     pub fn phrases(&self) -> &[(u64, Phrase)] {
         &self.phrases
     }
 
     /// Returns the instrument playing the `Part`
-    #[must_use]
     pub fn instrument(&self) -> Instrument {
         self.instrument
     }

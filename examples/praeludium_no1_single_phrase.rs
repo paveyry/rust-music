@@ -21,26 +21,26 @@ fn main() {
 /// Defines Bach's Praeludium No. 1 using only one phrase by utilizing the rhythm value of `Chord`
 /// to keep notes playing while the next notes start.
 fn praeludium() -> Result<Score> {
-    let mut part = Part::new("Piano".to_string(), Instrument::AcousticGrandPiano);
+    let mut part = Part::new("Piano", Instrument::AcousticGrandPiano);
 
     part.add_phrase(phrase()?, 0);
 
     let mut score = Score::new(
-        "Praeludium No 1 in C Major".to_string(),
-        96,
+        "Praeludium No 1 in C Major",
+        Tempo::new(96)?,
         Some(Metadata {
             key_signature: NN::C as i8,
             mode: Mode::Major,
             time_numerator: 4,
             time_denominator: 4,
         }),
-    )?;
+    );
     score.add_part(part);
     Ok(score)
 }
 
 fn phrase() -> Result<Phrase> {
-    let mut phrase = Phrase::new("Single phrase".to_string());
+    let mut phrase = Phrase::new("Single phrase");
     let mut add_bar = |pitch1: u7, pitch2: u7, pitch3: u7, pitch4: u7, pitch5: u7| -> Result<()> {
         for _ in 0..=1 {
             // Using a single note Chord to define a note that lasts while the next notes play.

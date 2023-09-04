@@ -30,11 +30,10 @@ impl Phrase {
     /// # Arguments
     ///
     /// * `name` - The title of the `Phrase`
-    #[must_use]
-    pub fn new(name: String) -> Phrase {
+    pub fn new<S: ToString>(name: S) -> Phrase {
         Phrase {
             entries: Vec::new(),
-            name,
+            name: name.to_string(),
         }
     }
 
@@ -70,13 +69,11 @@ impl Phrase {
     }
 
     /// Returns the Phrase's Vec of notes
-    #[must_use]
-    pub fn entries(&self) -> &Vec<PhraseEntry> {
-        &self.entries
+    pub fn entries(&self) -> &[PhraseEntry] {
+        self.entries.as_slice()
     }
 
     /// Returns the Phrase's name
-    #[must_use]
     pub fn name(&self) -> &str {
         self.name.as_str()
     }

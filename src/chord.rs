@@ -53,14 +53,12 @@ impl Chord {
     }
 
     /// Returns the rhythm value of the `Chord`
-    #[must_use]
     pub fn rhythm(&self) -> f64 {
         self.rhythm
     }
 
     /// Returns the notes of the `Chord`
-    #[must_use]
     pub fn notes(&self) -> &[Note] {
-        &self.notes
+        self.notes.as_slice()
     }
 }

@@ -32,6 +32,23 @@ pub struct Metadata {
     pub time_denominator: u8,
 }
 
+/// Describes the tempo of a score in beats per minute
+pub struct Tempo(u32);
+
+impl Tempo {
+    /// Returns a new tempo if non null, otherwise, returns an error
+    ///
+    /// # Errors
+    ///
+    /// Returns `ScoreError::InvalidTempo` if tempo is 0
+    pub fn new(tempo: u32) -> Result<Self> {
+        if tempo == 0 {
+            return Err(ScoreError::InvalidTempo.into());
+        }
+        Ok(Self(tempo))
+    }
+}
+
 /// Describes a full `Score`
 pub struct Score {
     /// Title of the `Score`
@@ -52,20 +69,13 @@ impl Score {
     /// * `name` - Title of the `Score`
     /// * `tempo` - Tempo of the `Score`
     /// * `Metadata` - Optional information
-    ///
-    /// # Errors
-    ///
-    /// Returns `ScoreError::InvalidTempo` if tempo is 0
-    pub fn new(name: String, tempo: u32, metadata: Option<Metadata>) -> Result<Score> {
-        if tempo == 0 {
-            return Err(ScoreError::InvalidTempo.into());
-        }
-        Ok(Score {
-            name,
+    pub fn new<S: ToString>(name: S, tempo: Tempo, metadata: Option<Metadata>) -> Score {
+        Score {
+            name: name.to_string(),
             parts: Vec::new(),
-            tempo,
+            tempo: tempo.0,
             metadata,
-        })
+        }
     }
 
     /// Adds a `Part` to the `Score`.
@@ -95,27 +105,23 @@ impl Score {
     }
 
     /// Returns the title of the `Score`
-    #[must_use]
     pub fn name(&self) -> &str {
         self.name.as_str()
     }
 
     /// Returns the `Part`s of the `Score`
-    #[must_use]
-    pub fn parts(&self) -> &Vec<Part> {
-        &self.parts
+    pub fn parts(&self) -> &[Part] {
+        self.parts.as_slice()
     }
 
     /// Returns the tempo of the `Score`
-    #[must_use]
     pub fn tempo(&self) -> u32 {
         self.tempo
     }
 
     /// Returns the metadata
-    #[must_use]
-    pub fn metadata(&self) -> &Option<Metadata> {
-        &self.metadata
+    pub fn metadata(&self) -> Option<&Metadata> {
+        self.metadata.as_ref()
     }
 }
 
@@ -280,7 +286,7 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
                 let mut delta = current_time - previous_time;
                 // do NoteOffs first
                 for mut te in track_events.1 {
-                    // TODO: raise error if > maxu28
+                    // TODO: raise error if > maxu28 (use `std::num::Wrapping`?)
                     te.delta = u28::new(delta as u32);
                     delta = 0; // the first event at this time has the whole delta but the others have 0
                     track.push(te);

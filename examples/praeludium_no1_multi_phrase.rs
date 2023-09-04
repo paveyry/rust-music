@@ -25,28 +25,28 @@ fn main() {
 /// with a single phrase by utilizing a property of `Chord` which allows to
 /// keep notes lasting while the next notes start
 fn praeludium() -> Result<Score> {
-    let mut part = Part::new("Piano".to_string(), Instrument::AcousticGrandPiano);
+    let mut part = Part::new("Piano", Instrument::AcousticGrandPiano);
 
     part.add_phrase(right_hand()?, 0);
     part.add_phrase(left_hand_high_note()?, 0);
     part.add_phrase(left_hand_low_note()?, 0);
 
     let mut score = Score::new(
-        "Praeludium No 1 in C Major".to_string(),
-        96,
+        "Praeludium No 1 in C Major",
+        Tempo::new(96)?,
         Some(Metadata {
             key_signature: NN::C as i8,
             mode: Mode::Major,
             time_numerator: 4,
             time_denominator: 4,
         }),
-    )?;
+    );
     score.add_part(part);
     Ok(score)
 }
 
 fn right_hand() -> Result<Phrase> {
-    let mut right_hand = Phrase::new("Right Hand".to_string());
+    let mut right_hand = Phrase::new("Right Hand");
     let mut add_bar = |pitch1: u7, pitch2: u7, pitch3: u7| -> Result<()> {
         for _ in 0..=1 {
             right_hand.add_rest(QUAVER);
@@ -107,7 +107,7 @@ fn right_hand() -> Result<Phrase> {
 }
 
 fn left_hand_low_note() -> Result<Phrase> {
-    let mut lhln = Phrase::new("Left Hand Low".to_string());
+    let mut lhln = Phrase::new("Left Hand Low");
     let mut add_bar = |pitch: u7| -> Result<()> {
         for _ in 0..=1 {
             lhln.add_note(Note::new(pitch, MINIM, MF)?);
@@ -128,7 +128,7 @@ fn left_hand_low_note() -> Result<Phrase> {
 }
 
 fn left_hand_high_note() -> Result<Phrase> {
-    let mut lhhn = Phrase::new("Left Hand High".to_string());
+    let mut lhhn = Phrase::new("Left Hand High");
     let mut add_bar = |pitch: u7| -> Result<()> {
         for _ in 0..=1 {
             lhhn.add_rest(SEMIQUAVER);

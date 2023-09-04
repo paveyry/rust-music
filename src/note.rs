@@ -16,17 +16,6 @@ pub struct Note {
     dynamic: u7,
 }
 
-// #[derive(Copy, Clone, PartialEq, Eq)]
-// pub enum NoteName {
-//     C = 0,
-//     D = 2,
-//     E = 4,
-//     F = 5,
-//     G = 7,
-//     A = 9,
-//     B = 11,
-// }
-
 /// Represents a note by name without a specific octave or accidental
 /// Supports both letters from A to G and traditional Do Re Mi ... names
 #[derive(Copy, Clone, PartialEq, Eq)]
@@ -81,19 +70,16 @@ impl Note {
     }
 
     /// Returns the pitch of the note
-    #[must_use]
     pub fn pitch(&self) -> u7 {
         self.pitch
     }
 
     /// Returns the rhythm value of the note
-    #[must_use]
     pub fn rhythm(&self) -> f64 {
         self.rhythm
     }
 
     /// Returns the dynamic value of the note
-    #[must_use]
     pub fn dynamic(&self) -> u7 {
         self.dynamic
     }
