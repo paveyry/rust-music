@@ -151,7 +151,7 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
             },
             timing: Timing::Metrical(u15::from(480)),
         };
-        let mut metadata_track = vec![
+        let mut metadata_events = vec![
             TrackEvent {
                 delta: u28::default(),
                 kind: TrackEventKind::Meta(MetaMessage::TrackName(score.name.as_bytes())),
@@ -162,7 +162,7 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
             },
         ];
         if let Some(mdata) = score.metadata() {
-            metadata_track.push(TrackEvent {
+            metadata_events.push(TrackEvent {
                 delta: u28::default(),
                 kind: TrackEventKind::Meta(MetaMessage::TimeSignature(
                     mdata.time_numerator,
@@ -171,7 +171,7 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
                     32u8,
                 )),
             });
-            metadata_track.push(TrackEvent {
+            metadata_events.push(TrackEvent {
                 delta: u28::default(),
                 kind: TrackEventKind::Meta(MetaMessage::KeySignature(
                     mdata.key_signature,
@@ -180,12 +180,8 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
             });
             // TODO: Handle more metadata (copyright, text fields, etc.)
         }
-        metadata_track.push(TrackEvent {
-            delta: u28::default(),
-            kind: TrackEventKind::Meta(MetaMessage::EndOfTrack),
-        });
 
-        let mut tracks = vec![metadata_track];
+        let mut tracks = Vec::new();
 
         for (channel, part) in score.parts().iter().enumerate() {
             let mut notes_per_time: BTreeMap<u64, (Vec<TrackEvent>, Vec<TrackEvent>)> =
@@ -267,7 +263,7 @@ impl<'a> TryFrom<&'a Score> for Smf<'a> {
                 continue;
             }
 
-            let mut track = Vec::new();
+            let mut track = metadata_events.clone();
             let part_instrument = part.instrument();
             if !matches!(part_instrument, Instrument::None) {
                 track.push(TrackEvent {
