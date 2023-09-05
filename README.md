@@ -1,4 +1,9 @@
-# Rust Music &emsp; ![checks_status](https://github.com/paveyry/rust-music/actions/workflows/cargo.yml/badge.svg?branch=main)
+# Rust Music &emsp; [![checks_status]][ci] [![version]][crate]
+
+[checks_status]: https://github.com/paveyry/rust-music/actions/workflows/cargo.yml/badge.svg?branch=main
+[ci]: https://github.com/paveyry/rust-music/actions?query=branch%3Amain
+[version]: https://img.shields.io/crates/v/rust-music.svg
+[crate]: https://crates.io/crates/rust-music
 
 A framework for programmatic music manipulation and composition.
 
