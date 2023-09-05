@@ -1,4 +1,4 @@
-use crate::{instrument::Instrument, phrase::Phrase};
+use crate::{Instrument, Phrase};
 
 /// Describes a score's part. A `Part` is played by a single
 /// instrument and can contain multiple phrases, played sequentially

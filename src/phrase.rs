@@ -1,5 +1,5 @@
-use crate::chord::Chord;
-use crate::note::Note;
+use crate::Chord;
+use crate::Note;
 
 /// Describes the entries contains in a `Phrase`
 #[derive(Clone)]

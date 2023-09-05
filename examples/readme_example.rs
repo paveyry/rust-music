@@ -1,8 +1,10 @@
 use std::error::Error;
 use std::fs::File;
+use std::result::Result;
 
 use rust_music::{
-    dynamic::MF, note::*, part::Part, phrase::Phrase, rhythm::CROTCHET, score::*, Instrument,
+    compute_pitch, dynamic::*, rhythm::*, Accidental, Instrument, Note, NoteName, Part, Phrase,
+    Score, Tempo,
 };
 
 fn main() -> Result<(), Box<dyn Error>> {

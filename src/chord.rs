@@ -1,5 +1,5 @@
 use crate::errors::ChordError;
-use crate::note::Note;
+use crate::Note;
 use crate::Result;
 
 /// Describes a set of notes played simultaneously

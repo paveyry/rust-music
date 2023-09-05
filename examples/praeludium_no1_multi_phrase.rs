@@ -1,14 +1,14 @@
 use std::fs::File;
 
 use rust_music::dynamic::*;
-use rust_music::note::{compute_pitch, Accidental as Acc, Note, NoteName as NN};
 use rust_music::num::u7;
-use rust_music::part::Part;
-use rust_music::phrase::Phrase;
 use rust_music::rhythm::*;
 use rust_music::score::*;
 use rust_music::Instrument;
+use rust_music::Part;
+use rust_music::Phrase;
 use rust_music::Result;
+use rust_music::{compute_pitch, Accidental as Acc, Note, NoteName as NN};
 
 fn main() {
     let score = praeludium().unwrap();
