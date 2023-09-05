@@ -1,37 +1,74 @@
 # Rust Music &emsp; ![checks_status](https://github.com/paveyry/rust-music/actions/workflows/cargo.yml/badge.svg?branch=main)
 
-`rust-music` is a framework for programmatic music manipulation and composition.
+A framework for programmatic music manipulation and composition.
 
-This library is currently a work-in-progress.
+## Overview
 
-## Goals
+It provides all the needed types and values to describe or generate complex music pieces, with multiple tracks and instruments,
+melodic phrases, chords, complex rhythms etc.
 
-* Provide a complete and easy-to-use library to compose and generate music
-* Export to MIDI files
-* Export to ABC files
-* Import from MIDI files
-* Import ABC files
+The `Score` type that carries this information can be fully exported as a playable MIDI file.
 
-## Already implemented
+## Usage
 
-* Compute pitch based on note letter, accidental, and octave
-* Define a note with pitch, rhythm value, and dynamic
-* Define a chord with multiple notes
-* Define a musical phrase with chords, notes, rests, with support for trailing and 
-late simultaneous notes and chords
-* Define a part with multiple consecutive or parallel phrases for a given instrument
-* Define a full score with multiple parts for multiple instruments
-* All standard MIDI instruments codes
+Add `rust-music` to the dependencies in your `Cargo.toml`.
 
-## Implemented but requires more testing
+```toml
+rust-music = "0.1.0"
+```
 
-* Export to MIDI files
+Then you can start creating music.
 
-## Next steps
+```rust
+use std::error::Error;
+use std::fs::File;
 
-* Export to ABC files
+use rust_music::{
+    score::*,
+    part::Part,
+    phrase::Phrase,
+    note::*,
+    rhythm::CROTCHET,
+    dynamic::MF,
+    Instrument,
+};
+
+fn main() -> Result<(), Box<dyn Error>> {
+    // Create a musical phrase that plays C-E-G (arpeggiated C Major chord) with crotchets, at MezzoForte volume
+    let mut phrase_to_repeat = Phrase::new();
+    phrase_to_repeat.add_note(Note::new(compute_pitch(NoteName::C, Accidental::Natural, 4)?, CROTCHET, MF)?);
+    phrase_to_repeat.add_note(Note::new(compute_pitch(NoteName::E, Accidental::Natural, 4)?, CROTCHET, MF)?);
+    phrase_to_repeat.add_note(Note::new(compute_pitch(NoteName::G, Accidental::Natural, 4)?, CROTCHET, MF)?);
+
+    // Create a piano part that plays the phrase from beat 0
+    let mut piano_part = Part::new(Instrument::AcousticGrandPiano);
+    piano_part.add_phrase(phrase_to_repeat.clone(), 0.);
+
+    // Create a guitar part that plays the phrase from beat 2 (at the same time as piano plays the E)
+    let mut guitar_part = Part::new(Instrument::NylonGuitar);
+    guitar_part.add_phrase(phrase_to_repeat, 1.);
+
+    // Create a score with a tempo of 60 (one beat per second) and add both parts
+    let mut score = Score::new("my score", Tempo::new(60)?, None);
+    score.add_part(piano_part);
+    score.add_part(guitar_part);
+
+    // Write the score to a MIDI file for playback
+    score.write_midi_file(File::create("my_score.mid")?)?;
+    Ok(())
+}
+```
+
+More complex examples are available in the `examples` directory of the `rust-music` Github repository.
+
+## Development Roadmap
+
+* Write more unit tests and examples
+* Improve and reorganize the crate's API for a less verbose and more idiomatic experience
 * Add a module with composition helpers (scale/chord generators, rhythm building systems, etc.)
-* Import from MIDI/ABC files?
+* Write a separate music procedural generation crate?
+* Read from MIDI files?
+* Export to ABC files?
 
 ## License
 

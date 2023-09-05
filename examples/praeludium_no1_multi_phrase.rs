@@ -1,13 +1,13 @@
 use std::fs::File;
 
-use rust_music::constants::dynamic::*;
-use rust_music::constants::rhythm::*;
-use rust_music::instrument::Instrument;
+use rust_music::dynamic::*;
 use rust_music::note::{compute_pitch, Accidental as Acc, Note, NoteName as NN};
 use rust_music::num::u7;
 use rust_music::part::Part;
 use rust_music::phrase::Phrase;
+use rust_music::rhythm::*;
 use rust_music::score::*;
+use rust_music::Instrument;
 use rust_music::Result;
 
 fn main() {
@@ -24,7 +24,7 @@ fn main() {
 /// with a single phrase by utilizing a property of `Chord` which allows to
 /// keep notes lasting while the next notes start
 fn praeludium() -> Result<Score> {
-    let mut part = Part::new(Instrument::AcousticGrandPiano);
+    let mut part: Part = Part::new(Instrument::AcousticGrandPiano);
 
     part.add_phrase(right_hand()?, 0.);
     part.add_phrase(left_hand_high_note()?, 0.);
