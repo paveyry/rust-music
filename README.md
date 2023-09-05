@@ -72,6 +72,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 ```
 
+[Listen to the output of this example](https://user-images.githubusercontent.com/3884900/265562792-423cc465-31de-47f2-8836-ef9c1a14abb1.mov)
+
 More complex examples are available in the `examples` directory of the `rust-music` Github repository.
 
 ## Development Roadmap
