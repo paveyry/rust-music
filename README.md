@@ -19,7 +19,7 @@ The `Score` type that carries this information can be fully exported as a playab
 Add `rust-music` to the dependencies in your `Cargo.toml`.
 
 ```toml
-rust-music = "0.1.2"
+rust-music = "0.1.3"
 ```
 
 Then you can start creating music.
