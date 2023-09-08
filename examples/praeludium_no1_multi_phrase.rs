@@ -50,9 +50,11 @@ fn right_hand() -> Result<Phrase> {
         for _ in 0..=1 {
             right_hand.add_rest(QUAVER);
             for _ in 0..=1 {
-                right_hand.add_note(Note::new(pitch1, SEMIQUAVER, MF)?);
-                right_hand.add_note(Note::new(pitch2, SEMIQUAVER, MF)?);
-                right_hand.add_note(Note::new(pitch3, SEMIQUAVER, MF)?);
+                right_hand.add_sequential_notes(Note::new_sequence(
+                    SEMIQUAVER,
+                    MF,
+                    &[pitch1, pitch2, pitch3],
+                ))?;
             }
         }
         Ok(())

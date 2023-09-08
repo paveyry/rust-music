@@ -1,5 +1,6 @@
 use crate::Chord;
 use crate::Note;
+use crate::Result;
 
 /// Describes the entries contains in a `Phrase`
 #[derive(Clone)]
@@ -60,10 +61,14 @@ impl Phrase {
     /// Adds multiple sequential notes to the phrase
     /// Each note will be played after the previous one.
     /// This function will clone the notes into the Phrase's entry Vec
-    pub fn add_sequential_notes<N: IntoIterator<Item = Note>>(&mut self, notes: N) {
+    pub fn add_sequential_notes<N: IntoIterator<Item = Result<Note>>>(
+        &mut self,
+        notes: N,
+    ) -> Result<()> {
         for n in notes.into_iter() {
-            self.add_note(n);
+            self.add_note(n?);
         }
+        Ok(())
     }
 
     /// Adds a chord to the phrase.

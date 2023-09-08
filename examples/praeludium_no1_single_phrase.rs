@@ -45,9 +45,11 @@ fn phrase() -> Result<Phrase> {
                 vec![Note::new(pitch2, DOTTED_QUAVER + CROTCHET, MF)?],
             )?);
             for _ in 0..=1 {
-                phrase.add_note(Note::new(pitch3, SEMIQUAVER, MF)?);
-                phrase.add_note(Note::new(pitch4, SEMIQUAVER, MF)?);
-                phrase.add_note(Note::new(pitch5, SEMIQUAVER, MF)?);
+                phrase.add_sequential_notes(Note::new_sequence(
+                    SEMIQUAVER,
+                    MF,
+                    &[pitch3, pitch4, pitch5],
+                ))?;
             }
         }
         Ok(())

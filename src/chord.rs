@@ -1,4 +1,5 @@
 use crate::errors::ChordError;
+use crate::num::u7;
 use crate::Note;
 use crate::Result;
 
@@ -37,7 +38,7 @@ impl Chord {
     ///
     /// * `ChordError::EmptyChord` if notes vec is empty
     /// * `ChordError::RhythmTooLong` if `rhythm` is longer than the longest note
-    pub fn new(rhythm: f64, notes: Vec<Note>) -> Result<Chord> {
+    pub fn new(rhythm: f64, notes: Vec<Note>) -> Result<Self> {
         if notes.is_empty() {
             return Err(ChordError::EmptyChord.into());
         }
@@ -50,6 +51,19 @@ impl Chord {
             return Err(ChordError::RhythmTooLong.into());
         }
         Ok(Chord { rhythm, notes })
+    }
+
+    /// Returns a new Chord based on the given rhythm value, note pitches, and dynamic.
+    ///
+    /// # Arguments
+    ///
+    /// * `rhythm`:  duration in beats of the `Chord` and all the notes it contains
+    /// * `pitches`: list of the pitches of the notes of the `Chord`
+    /// * `dynamic`: dynamic that each note in the `Chord` will take
+    pub fn from_pitches(rhythm: f64, dynamic: u7, pitches: &[u7]) -> Result<Self> {
+        // let notes: Result<Vec<_>> = pitches.iter().map(|p| Note::new(*p, rhythm, dynamic)).collect();
+        let notes: Result<Vec<_>> = Note::new_sequence(rhythm, dynamic, pitches).collect();
+        Self::new(rhythm, notes?)
     }
 
     /// Returns the rhythm value of the `Chord`
