@@ -3,7 +3,7 @@ use crate::Note;
 use crate::Result;
 
 /// Describes the entries contains in a `Phrase`
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum PhraseEntry {
     /// Silent Rest that has a rhythm value (see `constants::rhythm`)
     Rest(f64),
@@ -28,7 +28,7 @@ impl PhraseEntry {
 
 /// Describes a single musical phrase. Multiple Phrases can be stored in a Part.
 /// Phrases can be played in parallel too
-#[derive(Default, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct Phrase {
     /// list of entries in the phrase
     entries: Vec<PhraseEntry>,
@@ -43,7 +43,34 @@ impl Phrase {
     /// A `Phrase` contains entries that can be either a single `Note`, a `Chord` or a `Rest`
     /// Entries in a Phrase are played sequentially.
     pub fn new() -> Phrase {
-        Phrase::default()
+        Self::default()
+    }
+
+    /// Returns a new `Phrase` made of the sequential notes from the iterator
+    ///
+    /// # Arguments
+    ///
+    /// * `sequence`: iterator over the sequence of notes. Can be produced with `Note::new_sequence` for example
+    ///
+    /// # Errors
+    ///
+    /// This returns any error that can be found in the iterator entries
+    pub fn from_notes_sequence<N: IntoIterator<Item = Result<Note>>>(sequence: N) -> Result<Self> {
+        let mut duration = 0.;
+        let entries = sequence
+            .into_iter()
+            .map(|r| {
+                r.map(|n| {
+                    duration += n.rhythm();
+                    PhraseEntry::Note(n)
+                })
+            })
+            .collect::<Result<Vec<_>>>()?;
+        Ok(Self {
+            entries,
+            duration,
+            ..Self::default()
+        })
     }
 
     /// Sets a name for the `Phrase`. The name does not have to be unique.

@@ -4,7 +4,7 @@ use crate::Note;
 use crate::Result;
 
 /// Describes a set of notes played simultaneously
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Chord {
     /// `rhythm` is the length in beats that the `Chord` will take
     /// in a `Phrase`.
@@ -61,7 +61,6 @@ impl Chord {
     /// * `pitches`: list of the pitches of the notes of the `Chord`
     /// * `dynamic`: dynamic that each note in the `Chord` will take
     pub fn from_pitches(rhythm: f64, dynamic: u7, pitches: &[u7]) -> Result<Self> {
-        // let notes: Result<Vec<_>> = pitches.iter().map(|p| Note::new(*p, rhythm, dynamic)).collect();
         let notes: Result<Vec<_>> = Note::new_sequence(rhythm, dynamic, pitches).collect();
         Self::new(rhythm, notes?)
     }
