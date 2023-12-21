@@ -20,3 +20,10 @@ categories = ["multimedia", "multimedia::audio", "multimedia::encoding"]
 [dependencies]
 thiserror = "1.0.37"
 midly = "0.5.3"
+
+[features]
+composition = []
+
+[[example]]
+name = "scales_example"
+required-features = ["composition"]

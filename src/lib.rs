@@ -7,6 +7,9 @@ mod part;
 mod phrase;
 pub mod score;
 
+#[cfg(feature = "composition")]
+pub mod composition;
+
 pub use crate::errors::Error;
 pub type Result<T> = core::result::Result<T, Error>;
 

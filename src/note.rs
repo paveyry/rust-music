@@ -72,12 +72,14 @@ impl Note {
     /// Creates an iterator of notes with idential rhythms and dynamic which can be added directly
     /// to a phrase using `phrase.add_sequential_notes` to be played sequentially or collected as
     /// a vector to use in a `Chord`.
-    pub fn new_sequence(
+    pub fn new_sequence<'a, PitchIter: IntoIterator<Item = u7> + 'a>(
         rhythm: f64,
         dynamic: u7,
-        pitches: &[u7],
-    ) -> impl std::iter::Iterator<Item = Result<Note>> + '_ {
-        pitches.iter().map(move |p| Note::new(*p, rhythm, dynamic))
+        pitches: PitchIter,
+    ) -> impl std::iter::Iterator<Item = Result<Note>> + 'a {
+        pitches
+            .into_iter()
+            .map(move |p| Note::new(p, rhythm, dynamic))
     }
 
     /// Returns the pitch of the note

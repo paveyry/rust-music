@@ -61,7 +61,8 @@ impl Chord {
     /// * `pitches`: list of the pitches of the notes of the `Chord`
     /// * `dynamic`: dynamic that each note in the `Chord` will take
     pub fn from_pitches(rhythm: f64, dynamic: u7, pitches: &[u7]) -> Result<Self> {
-        let notes: Result<Vec<_>> = Note::new_sequence(rhythm, dynamic, pitches).collect();
+        let notes: Result<Vec<_>> =
+            Note::new_sequence(rhythm, dynamic, pitches.iter().copied()).collect();
         Self::new(rhythm, notes?)
     }
 

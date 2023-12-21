@@ -53,7 +53,7 @@ fn right_hand() -> Result<Phrase> {
                 right_hand.add_sequential_notes(Note::new_sequence(
                     SEMIQUAVER,
                     MF,
-                    &[pitch1, pitch2, pitch3],
+                    [pitch1, pitch2, pitch3],
                 ))?;
             }
         }
