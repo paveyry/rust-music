@@ -7,6 +7,7 @@ use rust_music::{
     Instrument, Note, NoteName, Part, Phrase, Score, Tempo,
 };
 
+// This example requires the `composition` feature.
 fn main() -> Result<(), Box<dyn Error>> {
     // Create a simple C Minor Scale on octave 4 (this requires the `composition` feature)
     let s = Scale::new(

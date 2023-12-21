@@ -7,6 +7,9 @@ mod part;
 mod phrase;
 pub mod score;
 
+// The `composition` feature enables the composition module which contains various
+// utilities that simplify music composition, for example by streamlining the creation
+// of common musical structures using music theory.
 #[cfg(feature = "composition")]
 pub mod composition;
 
