@@ -11,6 +11,7 @@ pub mod score;
 // utilities that simplify music composition, for example by streamlining the creation
 // of common musical structures using music theory.
 #[cfg(feature = "composition")]
+#[cfg_attr(docsrs, doc(cfg(feature = "composition")))]
 pub mod composition;
 
 pub use crate::errors::Error;
