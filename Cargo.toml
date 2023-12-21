@@ -1,6 +1,6 @@
 [package]
 name = "rust-music"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Pierre-Alexandre Veyry"]
 edition = "2021"
 description = """
