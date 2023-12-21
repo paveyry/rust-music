@@ -1,6 +1,6 @@
 [package]
 name = "rust-music"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Pierre-Alexandre Veyry"]
 edition = "2021"
 description = """
@@ -23,6 +23,9 @@ midly = "0.5.3"
 
 [features]
 composition = []
+
+[package.metadata.docs.rs]
+features = ["composition"]
 
 [[example]]
 name = "scales_example"
