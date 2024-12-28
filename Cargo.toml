@@ -1,6 +1,6 @@
 [package]
 name = "rust-music"
-version = "0.1.6"
+version = "1.0.0"
 authors = ["Pierre-Alexandre Veyry"]
 edition = "2021"
 description = """
@@ -18,7 +18,7 @@ keywords = ["music", "composition", "MIDI", "score", "sheet"]
 categories = ["multimedia", "multimedia::audio", "multimedia::encoding"]
 
 [dependencies]
-thiserror = "1.0.37"
+thiserror = "2.0.9"
 midly = "0.5.3"
 
 [features]

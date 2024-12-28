@@ -30,8 +30,8 @@ impl Chord {
     /// # Arguments
     ///
     /// * `rhythm`: duration in beats that the `Chord` will take in a phrase.
-    /// Some notes of the chord can last longer, but the next entry added to the
-    /// phrase will start after the end of this `rhythm` value.
+    ///   Some notes of the chord can last longer, but the next entry added to the
+    ///   phrase will start after the end of this `rhythm` value.
     /// * `notes`: list of notes in the `Chord` (len must be 1 or more)
     ///
     /// # Errors

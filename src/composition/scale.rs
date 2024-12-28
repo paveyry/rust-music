@@ -26,6 +26,9 @@ pub enum ScaleMode {
 }
 
 impl ScaleMode {
+    pub const MAJOR: Self = Self::Ionian;
+    pub const NATURAL_MINOR: Self = Self::Aeolian;
+
     // Returns the list of intervals for this mode.
     pub fn intervals(&self) -> &'static [u8] {
         match *self {
@@ -104,7 +107,7 @@ impl<'a> ScalePitchesIterator<'a> {
     }
 }
 
-impl<'a> Iterator for ScalePitchesIterator<'a> {
+impl Iterator for ScalePitchesIterator<'_> {
     type Item = u7;
     fn next(&mut self) -> Option<Self::Item> {
         if self.iteration >= self.length {
