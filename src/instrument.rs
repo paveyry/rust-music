@@ -1,7 +1,8 @@
 /// Describes a MIDI instrument and stores valid standard MIDI instrument code
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Instrument {
     None = -1,
+    #[default]
     AcousticGrandPiano = 0,
     BrightAcousticPiano,
     ElectricGrandPiano,

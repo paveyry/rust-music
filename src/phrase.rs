@@ -3,7 +3,7 @@ use crate::Note;
 use crate::Result;
 
 /// Describes the entries contains in a `Phrase`
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum PhraseEntry {
     /// Silent Rest that has a rhythm value (see `constants::rhythm`)
     Rest(f64),
@@ -28,7 +28,7 @@ impl PhraseEntry {
 
 /// Describes a single musical phrase. Multiple Phrases can be stored in a Part.
 /// Phrases can be played in parallel too
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Phrase {
     /// list of entries in the phrase
     entries: Vec<PhraseEntry>,

@@ -14,7 +14,7 @@ pub enum Error {
     ToMidiConversion(#[from] ToMidiConversionError),
 }
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, PartialEq)]
 pub enum NoteError {
     #[error("invalid pitch: {0}")]
     InvalidPitch(u32),
@@ -22,7 +22,7 @@ pub enum NoteError {
     InvalidRhythm(f64),
 }
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, PartialEq)]
 pub enum ChordError {
     #[error("chord contains 0 note")]
     EmptyChord,
@@ -30,13 +30,13 @@ pub enum ChordError {
     RhythmTooLong,
 }
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, PartialEq)]
 pub enum ScoreError {
     #[error("tempo cannot be 0")]
     InvalidTempo,
 }
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, PartialEq)]
 pub enum ToMidiConversionError {
     #[error("too many parts (16 max): {0}")]
     TooManyParts(usize),

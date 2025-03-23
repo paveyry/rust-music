@@ -13,13 +13,16 @@ use crate::midly::{
 };
 
 /// Describes the scale mode (Major or Minor, other modes are not specified)
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub enum Mode {
+    #[default]
     Major = 0,
     Minor = 1,
 }
 
 /// Contains information about the score that aren't needed for MIDI play
 /// such as time signature, key signature (number of accidentals), and mode
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct Metadata {
     /// Describes the number of accidentals of the `Score`.
     /// Should always be between -7 and 7. Negative numbers are
@@ -34,6 +37,7 @@ pub struct Metadata {
 }
 
 /// Describes the tempo of a score in beats per minute
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq)]
 pub struct Tempo(u32);
 
 impl Tempo {
@@ -51,6 +55,7 @@ impl Tempo {
 }
 
 /// Describes a full `Score`
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Score {
     /// Title of the `Score`
     name: String,

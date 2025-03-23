@@ -3,7 +3,7 @@ use crate::num::u7;
 use crate::Result;
 
 /// Represents a music note, with a pitch, a rhythm, and a dynamic (volume)
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Note {
     /// the rhythm value is a floating point value of a beat (no maximum).
     /// Some defaults are available in the rhythms_constants submodule.
@@ -17,7 +17,7 @@ pub struct Note {
 
 /// Represents a note by name without a specific octave or accidental
 /// Supports both letters from A to G and traditional Do Re Mi ... names
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum NoteName {
     Do = 0,
     Re = 2,
@@ -39,9 +39,10 @@ impl NoteName {
 }
 
 /// Represents a note accidental
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Accidental {
     Flat,
+    #[default]
     Natural,
     Sharp,
 }

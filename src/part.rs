@@ -3,7 +3,7 @@ use crate::{Instrument, Phrase};
 /// Describes a score's part. A `Part` is played by a single
 /// instrument and can contain multiple phrases, played sequentially
 /// or simultaneously
-#[derive(Clone)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Part {
     /// The phrases of the `Part`, indexed by the beat at which they start
     phrases: Vec<(f64, Phrase)>,

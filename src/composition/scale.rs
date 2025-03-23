@@ -13,8 +13,10 @@ mod intervals {
 }
 
 // The mode/type of a Scale
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ScaleMode {
-    Ionian,  // Major
+    #[default]
+    Ionian, // Major
     Aeolian, // Natural Minor
     Dorian,
     Lydian,
@@ -46,6 +48,7 @@ impl ScaleMode {
 }
 
 // A Scale defined by a starting pitch and a mode
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct Scale {
     tonic_pitch: u7,
     scale_mode: ScaleMode,

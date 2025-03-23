@@ -4,7 +4,7 @@ use crate::Note;
 use crate::Result;
 
 /// Describes a set of notes played simultaneously
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Chord {
     /// `rhythm` is the length in beats that the `Chord` will take
     /// in a `Phrase`.
